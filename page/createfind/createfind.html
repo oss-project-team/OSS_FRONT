@@ -24,15 +24,13 @@
       <!-- 사진 업로드 -->
       <section class="upload-section">
         <label class="section-label">사진 등록 (최대 5장)</label>
-        <div class="image-upload-container">
+        <div class="image-upload-container" id="imageUploadContainer">
           <label for="imageUpload" class="image-upload-btn" id="uploadBtn">
             <i class="material-icons">add_photo_alternate</i>
             <span>사진 추가</span>
           </label>
-          <div class="image-preview-list" id="imagePreviewList">
-            <!-- 이미지 미리보기가 여기에 추가됩니다 -->
-          </div>
           <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+          <!-- 이미지 미리보기는 JavaScript로 사진 추가 버튼 옆에 동적으로 추가됩니다 -->
         </div>
       </section>
 
@@ -115,6 +113,17 @@
         <button class="modal-btn cancel-btn" id="cancelBtn">취소</button>
         <button class="modal-btn confirm-btn" id="confirmBtn">올리기</button>
       </div>
+    </div>
+  </div>
+
+  <!-- 등록 완료 팝업 -->
+  <div class="modal-overlay" id="completeModal">
+    <div class="modal-popup">
+      <div class="modal-icon" id="completeModalIcon">
+        <i class="material-icons" id="completeModalIconType">check_circle</i>
+      </div>
+      <div class="modal-message" id="completeModalMessage">게시물이 성공적으로 등록되었습니다!</div>
+      <button class="modal-close-btn" id="completeModalCloseBtn">확인</button>
     </div>
   </div>
 
