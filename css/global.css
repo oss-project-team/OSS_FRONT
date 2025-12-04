@@ -1,0 +1,302 @@
+/* ============================================
+   전역 CSS 변수 및 공통 스타일
+   ============================================ */
+
+/* 폰트 */
+:root {
+  /* Pretendard 폰트 패밀리 */
+  --font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  
+  /* 색상 - 메인 컬러 */
+  --color-primary: #009ab7;
+  --color-primary-hover: #0088a3;
+  --color-primary-light: #e0f7fa;
+  --color-primary-dark: #007a91;
+  
+  /* 색상 - 텍스트 */
+  --color-text-primary: #1e1e1e;
+  --color-text-secondary: #666;
+  --color-text-tertiary: #999;
+  --color-text-white: #ffffff;
+  
+  /* 색상 - 배경 */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f7f7f7;
+  --color-bg-tertiary: #fafafa;
+  --color-bg-hover: #f0f0f0;
+  
+  /* 색상 - 경계선 */
+  --color-border: #e0e0e0;
+  --color-border-light: #f0f0f0;
+  --color-border-dark: #ccc;
+  
+  /* 색상 - 상태 */
+  --color-success: #4caf50;
+  --color-error: #ff3b30;
+  --color-warning: #ff9800;
+  --color-info: #2196f3;
+  
+  /* 색상 - 알림 배지 */
+  --color-badge: #ff3b30;
+  
+  /* 그림자 */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-primary: 0 4px 12px rgba(0, 154, 183, 0.3);
+  --shadow-primary-hover: 0 6px 16px rgba(0, 154, 183, 0.4);
+  
+  /* 간격 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-xxl: 24px;
+  
+  /* 테두리 반경 */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 50%;
+  
+  /* 전환 효과 */
+  --transition-fast: 0.2s;
+  --transition-normal: 0.3s;
+  --transition-slow: 0.5s;
+}
+
+/* ============================================
+   기본 스타일
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   공통 버튼 스타일
+   ============================================ */
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-white);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-family);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-primary-hover);
+}
+
+.btn-primary:disabled {
+  background: var(--color-border-dark);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-family);
+}
+
+.btn-secondary:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-dark);
+}
+
+/* ============================================
+   공통 입력 필드 스타일
+   ============================================ */
+
+.input-field {
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-family: var(--font-family);
+  background: var(--color-bg-primary);
+  transition: border-color var(--transition-fast);
+  color: var(--color-text-primary);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.input-field.error {
+  border-color: var(--color-error);
+}
+
+.textarea-field {
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-family: var(--font-family);
+  background: var(--color-bg-primary);
+  transition: border-color var(--transition-fast);
+  color: var(--color-text-primary);
+  resize: vertical;
+}
+
+.textarea-field:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* ============================================
+   공통 레이블 스타일
+   ============================================ */
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.label-required::after {
+  content: " *";
+  color: var(--color-error);
+}
+
+/* ============================================
+   공통 카드 스타일
+   ============================================ */
+
+.card {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   공통 모달 스타일
+   ============================================ */
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xxl);
+  max-width: 400px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: modalSlideIn var(--transition-normal) ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   유틸리티 클래스
+   ============================================ */
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+
+.hidden {
+  display: none !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+

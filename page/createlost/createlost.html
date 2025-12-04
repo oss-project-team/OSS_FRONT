@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 문서의 메타 정보 -->
+  <meta charset="UTF-8">  <!-- 한글 등 유니코드 문자 지원 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <!-- 모바일 반응형 설정 -->
+  <title>찾아밭 - 분실했어요! 게시물 작성</title>  <!-- 브라우저 탭에 표시될 제목 -->
+  
+  <!-- Pretendard 폰트 로드 (한글 최적화 폰트) -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  
+  <!-- Material Icons 로드 (구글 아이콘) -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- 이 페이지의 CSS 파일 연결 -->
+  <link rel="stylesheet" href="createlost.css">
+</head>
+<body>
+
+  <!-- 게시물 작성 페이지 전체 컨테이너 -->
+  <div class="create-container">
+    
+    <!-- 상단 헤더 영역 -->
+    <header class="create-header">
+      <!-- 뒤로가기 버튼 (홈으로 돌아가기) -->
+      <button class="back-btn" id="backBtn">
+        <i class="material-icons">arrow_back</i>  <!-- 뒤로가기 화살표 아이콘 -->
+      </button>
+      
+      <!-- 페이지 제목 -->
+      <h1 class="header-title">분실했어요! 게시물 작성</h1>
+      
+      <!-- 헤더 레이아웃 균형을 위한 빈 공간 (뒤로가기 버튼과 대칭) -->
+      <div style="width: 40px;"></div>
+    </header>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <div class="create-content">
+      
+      <!-- 사진 업로드 섹션 -->
+      <section class="upload-section">
+        <label class="section-label">사진 등록 (최대 5장)</label>
+        <div class="image-upload-container">
+          <!-- 사진 추가 버튼 (클릭하면 파일 선택 창이 열림) -->
+          <label for="imageUpload" class="image-upload-btn" id="uploadBtn">
+            <i class="material-icons">add_photo_alternate</i>  <!-- 사진 추가 아이콘 -->
+            <span>사진 추가</span>
+          </label>
+          
+          <!-- 이미지 미리보기를 표시할 영역 (JavaScript로 동적으로 추가됨) -->
+          <div class="image-preview-list" id="imagePreviewList">
+            <!-- 이미지 미리보기가 여기에 추가됩니다 -->
+          </div>
+          
+          <!-- 실제 파일 선택 input (숨겨진 요소, uploadBtn을 클릭하면 이 요소가 클릭됨) -->
+          <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+          <!-- accept="image/*": 이미지 파일만 선택 가능 -->
+          <!-- multiple: 여러 파일 선택 가능 -->
+          <!-- style="display: none;": 화면에 보이지 않게 숨김 -->
+        </div>
+      </section>
+
+      <!-- 제목 입력 섹션 -->
+      <section class="form-section">
+        <label class="section-label" for="title">제목</label>
+        <!-- 제목 입력 필드 -->
+        <input type="text" id="title" placeholder="제목을 입력하세요" maxlength="50">
+        <!-- maxlength="50": 최대 50자까지만 입력 가능 -->
+        <!-- 글자 수 카운터 (0/50 형식으로 표시) -->
+        <span class="char-count"><span id="titleCount">0</span>/50</span>
+      </section>
+
+      <!-- 자세한 설명 입력 섹션 -->
+      <section class="form-section">
+        <label class="section-label" for="description">자세한 설명</label>
+        <!-- 설명 입력 필드 (여러 줄 입력 가능) -->
+        <textarea id="description" placeholder="게시글 내용을 작성해주세요" rows="6" maxlength="500"></textarea>
+        <!-- rows="6": 기본 높이 6줄 -->
+        <!-- maxlength="500": 최대 500자까지만 입력 가능 -->
+        
+        <!-- 설명 작성 안내 문구 -->
+        <div class="description-hint">
+          분실했어요! 게시판에 올릴 게시글 내용을 500자 내로 작성해 주세요.<br>
+          분실한 물건의 특징, 분실한 장소, 분실한 시간 등 자세한 정보를 적어주세요.
+        </div>
+        
+        <!-- 글자 수 카운터 -->
+        <span class="char-count"><span id="descriptionCount">0</span>/500</span>
+      </section>
+
+      <!-- 분실한 물건 카테고리 선택 섹션 -->
+      <section class="form-section">
+        <label class="section-label">분실한 물건 카테고리</label>
+        <div class="category-grid">
+          <!-- 각 카테고리 버튼 (data-category 속성에 카테고리 이름 저장) -->
+          <button class="category-btn" data-category="의류">의류</button>
+          <button class="category-btn" data-category="지갑/카드">지갑/카드</button>
+          <button class="category-btn" data-category="서류">서류</button>
+          <button class="category-btn" data-category="귀금속">귀금속</button>
+          <button class="category-btn" data-category="전자기기">전자기기</button>
+          <button class="category-btn" data-category="기타">기타</button>
+        </div>
+      </section>
+
+      <!-- 분실한 장소 입력 섹션 -->
+      <section class="form-section">
+        <label class="section-label" for="location">분실한 장소</label>
+        <input type="text" id="location" placeholder="예: N4동, 도서관 등">
+        <!-- placeholder: 입력 전에 보이는 안내 텍스트 -->
+      </section>
+
+      <!-- 분실한 날짜 선택 섹션 -->
+      <section class="form-section">
+        <label class="section-label" for="lostDate">분실한 날짜</label>
+        <input type="date" id="lostDate">
+        <!-- type="date": 날짜 선택 캘린더 표시 -->
+      </section>
+
+      <!-- 작성 완료 버튼 (모든 정보 입력 후 클릭) -->
+      <button class="submit-btn" id="submitBtn">작성 완료</button>
+    </div>
+  </div>
+
+  <!-- 이미지 미리보기 모달 (큰 이미지를 보기 위한 팝업) -->
+  <div class="modal-overlay image-viewer-modal" id="imageViewerModal">
+    <div class="image-viewer-content">
+      <!-- 이미지 뷰어 닫기 버튼 -->
+      <button class="image-viewer-close" id="closeImageViewer">
+        <i class="material-icons">close</i>  <!-- 닫기 X 아이콘 -->
+      </button>
+      
+      <!-- 큰 이미지가 표시되는 영역 -->
+      <img id="viewerImage" src="" alt="이미지 미리보기">
+      
+      <!-- 이미지 번호 표시 (예: "1 / 5") -->
+      <div class="image-viewer-info">
+        <span id="imageViewerIndex">1 / 1</span>
+      </div>
+      
+      <!-- 이전 이미지 버튼 -->
+      <button class="image-viewer-prev" id="prevImage">
+        <i class="material-icons">chevron_left</i>  <!-- 왼쪽 화살표 아이콘 -->
+      </button>
+      
+      <!-- 다음 이미지 버튼 -->
+      <button class="image-viewer-next" id="nextImage">
+        <i class="material-icons">chevron_right</i>  <!-- 오른쪽 화살표 아이콘 -->
+      </button>
+    </div>
+  </div>
+
+  <!-- 확인 팝업 (게시물을 올리기 전 최종 확인) -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-content">
+      <!-- 팝업 제목 -->
+      <h3 class="modal-title">게시물을 올리시겠습니까?</h3>
+      
+      <!-- 입력한 정보 미리보기 영역 (JavaScript로 동적으로 채워짐) -->
+      <div class="modal-preview" id="modalPreview">
+        <!-- 미리보기 내용이 여기에 추가됩니다 -->
+      </div>
+      
+      <!-- 팝업 버튼 영역 -->
+      <div class="modal-buttons">
+        <!-- 취소 버튼 (팝업 닫기) -->
+        <button class="modal-btn cancel-btn" id="cancelBtn">취소</button>
+        <!-- 올리기 버튼 (게시물 등록) -->
+        <button class="modal-btn confirm-btn" id="confirmBtn">올리기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 이 페이지의 JavaScript 파일 연결 (모든 기능이 이 파일에 구현됨) -->
+  <script src="createlost.js"></script>
+</body>
+</html>
