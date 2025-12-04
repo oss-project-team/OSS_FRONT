@@ -22,13 +22,17 @@
         <div class="step-dot" data-step="2"></div>
         <div class="step-line"></div>
         <div class="step-dot" data-step="3"></div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step="4"></div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step="5"></div>
       </div>
     </header>
 
-    <!-- 1단계: 기본 정보 -->
+    <!-- 1단계: 학교메일 입력 -->
     <section class="signup-step active" id="step1">
       <div class="step-content">
-        <h2 class="step-title">기본 정보 입력</h2>
+        <h2 class="step-title">학교메일 입력</h2>
         
         <div class="form-group">
           <label for="email">학교메일</label>
@@ -37,24 +41,42 @@
           <button class="check-email-btn" id="checkEmailBtn">중복 확인</button>
         </div>
 
+        <button class="next-btn" id="nextBtn1">다음</button>
+      </div>
+    </section>
+
+    <!-- 2단계: 비밀번호 설정 -->
+    <section class="signup-step" id="step2">
+      <div class="step-content">
+        <h2 class="step-title">비밀번호 설정</h2>
+        
         <div class="form-group">
           <label for="password">비밀번호</label>
           <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
           <span class="error-message" id="passwordError"></span>
         </div>
 
+        <button class="next-btn" id="nextBtn2">다음</button>
+      </div>
+    </section>
+
+    <!-- 3단계: 비밀번호 확인 -->
+    <section class="signup-step" id="step3">
+      <div class="step-content">
+        <h2 class="step-title">비밀번호 확인</h2>
+        
         <div class="form-group">
           <label for="passwordConfirm">비밀번호 확인</label>
           <input type="password" id="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" required>
           <span class="error-message" id="passwordConfirmError"></span>
         </div>
 
-        <button class="next-btn" id="nextBtn1">다음</button>
+        <button class="next-btn" id="nextBtn3">다음</button>
       </div>
     </section>
 
-    <!-- 2단계: 약관 동의 -->
-    <section class="signup-step" id="step2">
+    <!-- 4단계: 약관 동의 -->
+    <section class="signup-step" id="step4">
       <div class="step-content">
         <h2 class="step-title">약관 동의</h2>
         
@@ -85,12 +107,12 @@
           </div>
         </div>
 
-        <button class="next-btn" id="nextBtn2" disabled>다음</button>
+        <button class="next-btn" id="nextBtn4" disabled>다음</button>
       </div>
     </section>
 
-    <!-- 3단계: 프로필 설정 -->
-    <section class="signup-step" id="step3">
+    <!-- 5단계: 프로필 설정 -->
+    <section class="signup-step" id="step5">
       <div class="step-content">
         <h2 class="step-title">프로필 설정</h2>
         
@@ -118,6 +140,17 @@
         <button class="complete-btn" id="completeBtn" disabled>가입 완료</button>
       </div>
     </section>
+  </div>
+
+  <!-- 중복 확인 팝업 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-popup">
+      <div class="modal-icon" id="modalIcon">
+        <i class="material-icons" id="modalIconType">check_circle</i>
+      </div>
+      <div class="modal-message" id="modalMessage">메시지</div>
+      <button class="modal-close-btn" id="modalCloseBtn">확인</button>
+    </div>
   </div>
 
   <script src="signup.js"></script>

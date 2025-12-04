@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>분실했어요 - 상세페이지</title>
+
+    <link rel="stylesheet" href="detail_lost.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <!-- 🔙 상단 뒤로가기 -->
+        <header class="detail-header">
+            <button id="backBtn"><i class="material-icons">arrow_back</i></button>
+        </header>
+
+        <!-- 🔥 큰 이미지 -->
+        <div class="detail-image-box">
+            <img id="detailImage" src="">
+        </div>
+
+        <!-- 🔥 작성자 정보 박스 -->
+        <div class="detail-user-section">
+            <div class="user-info">
+                <div class="user-profile"></div>
+                <div class="user-name">닉네임</div>
+            </div>
+
+            <div class="user-status">
+                <span class="status-dot"></span>
+                <span class="status-text">해결 중</span>
+            </div>
+        </div>
+
+        <!-- 🔥 내용 카드 -->
+        <div class="detail-card">
+
+            <div class="detail-category" id="detailCategory">카테고리</div>
+
+            <div class="detail-title" id="detailTitle">제목 불러오는 중...</div>
+
+            <div class="detail-desc" id="detailDesc">내용 로딩중...</div>
+
+            <div class="detail-info-box">
+                <div class="info-row">
+                    <span class="info-label">습득 장소</span>
+                    <span class="info-value" id="detailPlace"></span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">습득 날짜</span>
+                    <span class="info-value" id="detailDate"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 🔥 쪽지 버튼 -->
+        <div class="btn-wrap">
+            <button id="msgBtn" class="btn-msg">쪽지보내기</button>
+        </div>
+
+    </div>
+
+    <script src="detail_lost.js"></script>
+
+</body>
+
+</html>

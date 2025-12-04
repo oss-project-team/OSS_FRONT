@@ -1,0 +1,162 @@
+body{margin:0;padding:0;background:#f4f4f4;font-family:'Pretendard',sans-serif;}
+#contactList{display:block;}
+#chatWindow{display:none;flex-direction:column;height:100vh;}
+#chatWindow.active{display:flex;}
+
+/* ================= 상단 헤더 ================= */
+.top-header{
+    height:55px;
+    background:#fff;
+    border-bottom:1px solid #ddd;
+    display:flex;
+    align-items:center;
+    padding:0 22px;
+    position:sticky;
+    top:0;
+    z-index:10;
+    position:relative;         /* 중앙 정렬을 위해 추가 */
+}
+
+/* 제목 중앙 정렬 */
+.top-header span{
+    font-size:18px;
+    font-weight:700;
+    position:absolute;         /* 화면 중앙에 고정 */
+    left:50%;
+    transform:translateX(-50%);
+}
+
+/* back-btn 삭제했으니 제거 가능 */
+.back-btn{
+    background:none;
+    border:none;
+    font-size:22px;
+    cursor:pointer;
+}
+
+/* 🔔 오른쪽 아이콘 고정 */
+.right-icons{
+    position:absolute;
+    right:22px;                /* 오른쪽에 고정 */
+    display:flex;
+    gap:20px;
+    font-size:21px;
+}
+
+/* 🔥 아이콘 공통 스타일 */
+.right-icons i{
+    font-size:24px;
+    cursor:pointer;
+    color:#5D8AA8;
+    transition:0.2s;
+}
+.right-icons i:hover{opacity:.7;}
+
+
+/* 메시지 카드 */
+.contact-wrapper{padding:15px;}
+.msg-card{
+    width:70%;margin:12px auto;background:#fff;border-radius:15px;padding:15px;
+    display:flex;cursor:pointer;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+.msg-card:hover{transform:translateY(-2px);}
+.avatar{width:45px;height:45px;background:#cfc;border-radius:50%;margin-right:14px;}
+.text-box{display:flex;flex-direction:column;justify-content:center;}
+.name{font-size:15px;font-weight:600;margin:0;margin-bottom:5px;}
+.preview{font-size:13px;color:#777;margin:0;}
+
+/* unread dot */
+.unread-dot{
+    display:none;width:7px;height:7px;border-radius:50%;background:#ff3b30;margin-left:4px;
+}
+
+/* 채팅창 상단 */
+.chat-header{
+    height:55px;background:#fff;border-bottom:1px solid #ddd;
+    display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;
+    position:sticky;top:0;z-index:20;
+}
+.chat-header .back-btn{position:absolute;left:18px;}
+
+/* 🔔 채팅 내부 종 */
+.chat-bell-btn{position:absolute;right:18px;background:none;border:none;cursor:pointer;}
+.chat-bell-icon{font-size:22px;color:#5D8AA8;}
+.chat-bell-icon.off{color:#bbb;}
+
+.chat-content{flex:1;padding:20px;padding-bottom:160px;overflow-y:auto;}
+
+/* 메시지 */
+.msg-row{display:flex;margin-bottom:12px;}
+.msg-row.left{justify-content:flex-start;}
+.msg-row.right{justify-content:flex-end;}
+
+.msg-wrapper{display:flex;align-items:flex-end;gap:6px;max-width:65%;}
+.msg-row.left .msg-wrapper{flex-direction:row-reverse;}
+.msg-row.right .msg-wrapper{flex-direction:row;}
+
+.msg-bubble{
+    font-size:14px;padding:10px 14px;border-radius:15px;
+    max-width:100%;word-break:break-word;
+}
+.left-bubble{background:#fff;border:1px solid #ddd;}
+.right-bubble{background:#5D8AA8;color:#fff;}
+
+.msg-time{font-size:11px;color:#888;white-space:nowrap;margin-bottom:2px;}
+.chat-image{max-width:150px;border-radius:10px;cursor:pointer;margin-top:3px;}
+
+/* 입력창 */
+.chat-input-area{
+    position:fixed;bottom:60px;width:100%;background:#fff;
+    border-top:1px solid #ddd;display:flex;align-items:center;
+    padding:10px 15px;box-sizing:border-box;
+}
+.img-upload{
+    width:34px;height:34px;border-radius:50%;border:1px solid #ddd;
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    margin-right:10px;cursor:pointer;
+}
+.img-upload input{display:none;}
+#chatInput{
+    flex:1;border:1px solid #ddd;border-radius:20px;padding:8px 12px;font-size:14px;
+}
+.send-btn{
+    width:38px;height:38px;border-radius:50%;margin-left:10px;background:#5D8AA8;color:#fff;border:none;cursor:pointer;
+}
+
+/* ================== 하단바 ================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 70px;
+  background: #fff;
+  border-top: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 2000;
+}
+
+.nav-item {
+  flex: 1;
+  border: none;
+  background:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:#999;
+}
+.nav-item.active{color:#009ab7;}
+.nav-icon{font-size:24px;}
+.nav-label{font-size:12px}
+
+/* 이미지 팝업 */
+.img-modal{
+    display:none;position:fixed;width:100%;height:100%;
+    top:0;left:0;background:rgba(0,0,0,.75);
+    justify-content:center;align-items:center;z-index:3000;
+}
+.modal-content-img{max-width:85%;max-height:85%;border-radius:12px;}
+.close-modal{
+    position:absolute;right:20px;top:15px;font-size:35px;color:#fff;cursor:pointer;
+}
