@@ -362,3 +362,97 @@ body {
   }
 }
 
+/* 팝업 모달 */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-popup {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 24px 24px;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-icon.success {
+  background: #e8f5e9;
+}
+
+.modal-icon.error {
+  background: #ffebee;
+}
+
+.modal-icon .material-icons {
+  font-size: 48px;
+}
+
+.modal-icon.success .material-icons {
+  color: #4caf50;
+}
+
+.modal-icon.error .material-icons {
+  color: #f44336;
+}
+
+.modal-message {
+  font-size: 16px;
+  color: #1e1e1e;
+  font-weight: 500;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.modal-close-btn {
+  width: 100%;
+  padding: 14px;
+  background: #009ab7;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: #0088a3;
+}
+
