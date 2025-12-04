@@ -1,0 +1,153 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', sans-serif;
+    background: #f7f7f7;
+}
+
+.page-wrapper {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100vh;
+}
+
+
+/* 🔙 헤더 */
+
+.detail-header {
+    padding: 16px;
+}
+
+.detail-header button {
+    background: none;
+    border: none;
+}
+
+.detail-header i {
+    font-size: 28px;
+}
+
+
+/* 🔥 큰 이미지 */
+
+.detail-image-box {
+    width: 100%;
+    height: auto;
+}
+
+.detail-image-box img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+
+/* 🔥 작성자 정보 */
+
+.detail-user-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-profile {
+    width: 40px;
+    height: 40px;
+    background: #ddd;
+    border-radius: 50%;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.user-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background: #ff9800;
+    border-radius: 50%;
+}
+
+
+/* 내용 박스 */
+
+.detail-card {
+    margin: 16px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #eee;
+}
+
+.detail-category {
+    font-size: 14px;
+    font-weight: 600;
+    color: #009ab7;
+}
+
+.detail-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 8px;
+}
+
+.detail-desc {
+    margin-top: 12px;
+    color: #333;
+    line-height: 1.6;
+}
+
+
+/* 정보 박스 */
+
+.detail-info-box {
+    margin-top: 20px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+}
+
+.info-label {
+    color: #666;
+}
+
+.info-value {
+    font-weight: 600;
+}
+
+
+/* 쪽지 버튼 */
+
+.btn-wrap {
+    margin: 20px;
+}
+
+.btn-msg {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 30px;
+    background: #009ab7;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+}
