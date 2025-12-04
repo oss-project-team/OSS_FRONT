@@ -98,10 +98,13 @@ body {
 .image-preview-item {
   position: relative;
   width: calc(33.333% - 8px);
+  min-width: 100px;
   aspect-ratio: 1;
   border-radius: 8px;
   overflow: hidden;
   background: #f0f0f0;
+  flex-shrink: 0;
+  display: block;
 }
 
 .image-preview-item img {
@@ -550,5 +553,71 @@ textarea {
   .image-viewer-next .material-icons {
     font-size: 24px;
   }
+}
+
+/* 등록 완료 팝업 */
+.modal-popup {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 24px 24px;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.modal-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-icon.success {
+  background: #e8f5e9;
+}
+
+.modal-icon.error {
+  background: #ffebee;
+}
+
+.modal-icon .material-icons {
+  font-size: 48px;
+}
+
+.modal-icon.success .material-icons {
+  color: #4caf50;
+}
+
+.modal-icon.error .material-icons {
+  color: #f44336;
+}
+
+.modal-message {
+  font-size: 16px;
+  color: #1e1e1e;
+  font-weight: 500;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.modal-close-btn {
+  width: 100%;
+  padding: 14px;
+  background: #009ab7;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: #0088a3;
 }
 

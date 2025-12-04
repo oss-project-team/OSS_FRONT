@@ -11,47 +11,82 @@ const postData = {
 const MAX_IMAGES = 5;
 
 // DOM 요소 (나중에 초기화됨)
-let backBtn, imageUpload, imagePreviewList, uploadBtn;
+let backBtn, imageUpload, imageUploadContainer, uploadBtn;
 let titleInput, titleCount, descriptionInput, descriptionCount;
 let categoryButtons, locationInput, foundDateInput, submitBtn;
 let confirmModal, cancelBtn, confirmBtn, modalPreview;
 let imageViewerModal, viewerImage, imageViewerIndex;
-let closeImageViewer, prevImageBtn, nextImageBtn;
+let closeImageViewerBtn, prevImageBtn, nextImageBtn;
+let completeModal, completeModalIcon, completeModalIconType, completeModalMessage, completeModalCloseBtn;
 let currentImageIndex = 0;
 
 // 이미지 업로드 이벤트 핸들러
 function setupImageUpload() {
   imageUpload.addEventListener('change', function(e) {
-  const files = Array.from(e.target.files);
-  const remainingSlots = MAX_IMAGES - postData.images.length;
-  
-  if (files.length > remainingSlots) {
-    alert(`최대 ${MAX_IMAGES}장까지 업로드할 수 있습니다. (현재 ${postData.images.length}장 업로드됨)`);
-    files.splice(remainingSlots);
-  }
-  
-  files.forEach(file => {
+    const files = Array.from(e.target.files);
+    
+    // 파일이 없으면 리턴
+    if (files.length === 0) {
+      return;
+    }
+    
+    const remainingSlots = MAX_IMAGES - postData.images.length;
+    
+    if (files.length > remainingSlots) {
+      alert(`최대 ${MAX_IMAGES}장까지 업로드할 수 있습니다. (현재 ${postData.images.length}장 업로드됨)`);
+      files.splice(remainingSlots);
+    }
+    
+    // 이미 5장이면 더 이상 추가하지 않음
     if (postData.images.length >= MAX_IMAGES) {
+      alert(`최대 ${MAX_IMAGES}장까지 업로드할 수 있습니다.`);
+      e.target.value = '';
       return;
     }
     
-    // 파일 크기 확인 (5MB 제한)
-    if (file.size > 5 * 1024 * 1024) {
-      alert(`${file.name} 파일 크기는 5MB 이하여야 합니다.`);
-      return;
-    }
+    // 유효한 파일만 필터링
+    const validFiles = files.filter(file => {
+      // 파일 크기 확인 (5MB 제한)
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} 파일 크기는 5MB 이하여야 합니다.`);
+        return false;
+      }
+      return true;
+    });
     
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      postData.images.push({
-        file: file,
-        url: e.target.result
+    // 모든 파일을 읽기 위한 Promise 배열
+    const readPromises = validFiles.map(file => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          resolve({
+            file: file,
+            url: e.target.result
+          });
+        };
+        reader.onerror = function() {
+          reject(new Error(`파일 읽기 실패: ${file.name}`));
+        };
+        reader.readAsDataURL(file);
       });
+    });
+    
+    // 모든 파일 읽기가 완료되면 미리보기 업데이트
+    Promise.all(readPromises).then(images => {
+      // 이미지 개수 제한 확인
+      const availableSlots = MAX_IMAGES - postData.images.length;
+      const imagesToAdd = images.slice(0, availableSlots);
+      
+      // 읽은 이미지들을 postData.images 배열에 추가
+      postData.images.push(...imagesToAdd);
+      
+      // 이미지 미리보기 업데이트 (한 번만)
       updateImagePreview();
-    };
-    reader.readAsDataURL(file);
-  });
-  
+    }).catch(error => {
+      console.error('이미지 읽기 오류:', error);
+      alert('이미지를 읽는 중 오류가 발생했습니다.');
+    });
+    
     // 입력 필드 리셋
     e.target.value = '';
   });
@@ -59,7 +94,15 @@ function setupImageUpload() {
 
 // 이미지 미리보기 업데이트
 function updateImagePreview() {
-  imagePreviewList.innerHTML = '';
+  // 컨테이너가 없으면 리턴
+  if (!imageUploadContainer) {
+    console.error('imageUploadContainer를 찾을 수 없습니다.');
+    return;
+  }
+  
+  // 기존 미리보기 아이템들 제거 (사진 추가 버튼과 input은 유지)
+  const existingPreviews = imageUploadContainer.querySelectorAll('.image-preview-item');
+  existingPreviews.forEach(item => item.remove());
   
   postData.images.forEach((image, index) => {
     const item = document.createElement('div');
@@ -70,7 +113,8 @@ function updateImagePreview() {
         <i class="material-icons">close</i>
       </button>
     `;
-    imagePreviewList.appendChild(item);
+    // 컨테이너에 직접 추가 (사진 추가 버튼 옆에)
+    imageUploadContainer.appendChild(item);
     
     // 이미지 클릭 이벤트 추가
     const imgElement = item.querySelector('img');
@@ -80,20 +124,21 @@ function updateImagePreview() {
         openImageViewer(index);
       }
     });
+    
+    // 삭제 버튼 클릭 이벤트 추가
+    const removeBtn = item.querySelector('.remove-btn');
+    removeBtn.addEventListener('click', function(e) {
+      e.stopPropagation(); // 이벤트 전파 중지
+      postData.images.splice(index, 1);
+      updateImagePreview(); // 미리보기 다시 업데이트
+    });
   });
   
   // 업로드 버튼 표시/숨김
   if (postData.images.length >= MAX_IMAGES) {
-    uploadBtn.classList.add('hidden');
+    uploadBtn.style.display = 'none';
   } else {
-    uploadBtn.classList.remove('hidden');
-  }
-  
-  // 업로드 버튼 클릭 이벤트 재등록
-  if (postData.images.length < MAX_IMAGES) {
-    uploadBtn.addEventListener('click', () => {
-      imageUpload.click();
-    });
+    uploadBtn.style.display = 'flex';
   }
 }
 
@@ -147,15 +192,7 @@ function showNextImage() {
 
 // 이벤트 리스너 설정
 function setupEventListeners() {
-  // 이미지 삭제
-  imagePreviewList.addEventListener('click', function(e) {
-    if (e.target.closest('.remove-btn')) {
-      e.stopPropagation(); // 이미지 클릭 이벤트와 충돌 방지
-      const index = parseInt(e.target.closest('.remove-btn').dataset.index);
-      postData.images.splice(index, 1);
-      updateImagePreview();
-    }
-  });
+  // 이미지 삭제는 각 이미지 아이템에 직접 이벤트 리스너를 추가하므로 여기서는 제거
 
   // 제목 글자 수 카운트
   titleInput.addEventListener('input', function() {
@@ -199,30 +236,30 @@ function setupEventListeners() {
   submitBtn.addEventListener('click', function() {
   // 유효성 검사
   if (!postData.title.trim()) {
-    alert('제목을 입력해주세요.');
+    showCompleteModal('제목을 입력해주세요.', 'error');
     titleInput.focus();
     return;
   }
   
   if (!postData.description.trim()) {
-    alert('자세한 설명을 입력해주세요.');
+    showCompleteModal('자세한 설명을 입력해주세요.', 'error');
     descriptionInput.focus();
     return;
   }
   
   if (!postData.category) {
-    alert('찾은 물건 카테고리를 선택해주세요.');
+    showCompleteModal('찾은 물건 카테고리를 선택해주세요.', 'error');
     return;
   }
   
   if (!postData.location.trim()) {
-    alert('찾은 장소를 입력해주세요.');
+    showCompleteModal('찾은 장소를 입력해주세요.', 'error');
     locationInput.focus();
     return;
   }
   
   if (!postData.foundDate) {
-    alert('찾은 날짜를 선택해주세요.');
+    showCompleteModal('찾은 날짜를 선택해주세요.', 'error');
     foundDateInput.focus();
     return;
   }
@@ -243,8 +280,46 @@ function setupEventListeners() {
     }
   });
 
+  // 완료 팝업 표시 함수
+  function showCompleteModal(message, type = 'success', onClose = null) {
+    completeModalMessage.textContent = message;
+    
+    if (type === 'success') {
+      completeModalIcon.className = 'modal-icon success';
+      completeModalIconType.textContent = 'check_circle';
+    } else {
+      completeModalIcon.className = 'modal-icon error';
+      completeModalIconType.textContent = 'error';
+    }
+    
+    // 팝업 닫기 콜백 저장
+    if (onClose) {
+      completeModalCloseBtn.onclick = function() {
+        closeCompleteModal();
+        onClose();
+      };
+    } else {
+      completeModalCloseBtn.onclick = closeCompleteModal;
+    }
+    
+    completeModal.classList.add('show');
+  }
+
+  // 완료 팝업 닫기 함수
+  function closeCompleteModal() {
+    completeModal.classList.remove('show');
+  }
+
+  // 완료 팝업 닫기 이벤트
+  completeModalCloseBtn.addEventListener('click', closeCompleteModal);
+  completeModal.addEventListener('click', function(e) {
+    if (e.target === completeModal) {
+      closeCompleteModal();
+    }
+  });
+
   // 이미지 뷰어 이벤트 리스너
-  closeImageViewer.addEventListener('click', closeImageViewer);
+  closeImageViewerBtn.addEventListener('click', closeImageViewer);
 
   imageViewerModal.addEventListener('click', function(e) {
     if (e.target === imageViewerModal) {
@@ -303,18 +378,26 @@ function setupEventListeners() {
       const data = await response.json();
       
       if (response.ok) {
-        alert('게시물이 성공적으로 등록되었습니다!');
-        window.location.href = '../home/home.html';
+        // 확인 팝업 닫기
+        confirmModal.classList.remove('show');
+        // 완료 팝업 표시 후 홈 페이지로 이동
+        showCompleteModal('게시물이 성공적으로 등록되었습니다!', 'success', function() {
+          window.location.href = '../home/home.html';
+        });
       } else {
-        alert(data.error || '게시물 등록에 실패했습니다.');
+        // 실패 시 에러 메시지 표시
+        showCompleteModal(data.error || '게시물 등록에 실패했습니다.', 'error');
         confirmBtn.disabled = false;
         confirmBtn.textContent = '올리기';
       }
     } catch (error) {
       console.error('게시물 업로드 오류:', error);
+      // 확인 팝업 닫기
+      confirmModal.classList.remove('show');
       // 임시 처리: 서버 없을 때
-      alert('게시물이 성공적으로 등록되었습니다! (임시)');
-      window.location.href = '../home/home.html';
+      showCompleteModal('게시물이 성공적으로 등록되었습니다! (임시)', 'success', function() {
+        window.location.href = '../home/home.html';
+      });
     }
   });
 }
@@ -369,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // DOM 요소 가져오기
   backBtn = document.getElementById('backBtn');
   imageUpload = document.getElementById('imageUpload');
-  imagePreviewList = document.getElementById('imagePreviewList');
+  imageUploadContainer = document.getElementById('imageUploadContainer');
   uploadBtn = document.getElementById('uploadBtn');
   titleInput = document.getElementById('title');
   titleCount = document.getElementById('titleCount');
@@ -386,15 +469,26 @@ document.addEventListener('DOMContentLoaded', function() {
   imageViewerModal = document.getElementById('imageViewerModal');
   viewerImage = document.getElementById('viewerImage');
   imageViewerIndex = document.getElementById('imageViewerIndex');
-  closeImageViewer = document.getElementById('closeImageViewer');
+  closeImageViewerBtn = document.getElementById('closeImageViewer');
   prevImageBtn = document.getElementById('prevImage');
   nextImageBtn = document.getElementById('nextImage');
+  completeModal = document.getElementById('completeModal');
+  completeModalIcon = document.getElementById('completeModalIcon');
+  completeModalIconType = document.getElementById('completeModalIconType');
+  completeModalMessage = document.getElementById('completeModalMessage');
+  completeModalCloseBtn = document.getElementById('completeModalCloseBtn');
 
   // 오늘 날짜를 기본값으로 설정
   const today = new Date().toISOString().split('T')[0];
   foundDateInput.value = today;
   foundDateInput.max = today; // 오늘 이후 날짜 선택 불가
 
+  // 변수가 제대로 로드되었는지 확인
+  if (!imageUploadContainer) {
+    console.error('imageUploadContainer를 찾을 수 없습니다. HTML을 확인해주세요.');
+    return;
+  }
+  
   // 이벤트 리스너 설정
   setupImageUpload();
   setupEventListeners();
