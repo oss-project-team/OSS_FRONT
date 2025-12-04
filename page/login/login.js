@@ -29,7 +29,28 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
             });
 
-            const data = await response.json();
+            // 응답이 JSON인지 확인하고 파싱
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                try {
+                    data = await response.json();
+                } catch (jsonError) {
+                    console.error("JSON 파싱 오류:", jsonError);
+                    alert("서버 응답을 처리하는 중 오류가 발생했습니다.");
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = "로그인";
+                    return;
+                }
+            } else {
+                // JSON이 아닌 응답인 경우
+                const text = await response.text();
+                console.error("예상하지 못한 응답 형식:", text);
+                alert("서버 응답 형식 오류가 발생했습니다.");
+                loginBtn.disabled = false;
+                loginBtn.textContent = "로그인";
+                return;
+            }
 
             if (response.ok) {
                 // 로그인 성공 - 백엔드가 반환하는 access_token과 refresh_token 저장
@@ -44,26 +65,38 @@ document.addEventListener("DOMContentLoaded", function() {
             } else {
                 // 로그인 실패 - 백엔드가 반환하는 error 메시지 표시
                 alert(data.error || "로그인에 실패했습니다. 다시 시도해주세요.");
+                loginBtn.disabled = false;
+                loginBtn.textContent = "로그인";
             }
         } catch (error) {
             console.error("로그인 오류:", error);
-            // [임시 코드] 서버가 없거나 네트워크 오류 발생 시 임시 로그인 처리
-            // 실제 서버가 준비되면 이 부분은 제거하거나 주석 처리하세요
-            console.log("서버 연결 실패 - 임시 로그인 처리");
             
-            // 임시로 토큰 저장 (테스트용)
-            localStorage.setItem("access_token", "temp_token_" + Date.now());
-            localStorage.setItem("refresh_token", "temp_refresh_token_" + Date.now());
-            
-            // 홈 페이지로 이동
-            setTimeout(() => {
-                window.location.href = "../home/home.html";
-            }, 500); // 0.5초 후 이동 (로딩 효과를 위해)
-            return; // finally 블록 실행 안 하도록 return
+            // 네트워크 오류인지 확인
+            if (error instanceof TypeError && error.message.includes("fetch")) {
+                console.log("서버 연결 실패 - 임시 로그인 처리");
+                // [임시 코드] 서버가 없거나 네트워크 오류 발생 시 임시 로그인 처리
+                // 실제 서버가 준비되면 이 부분은 제거하거나 주석 처리하세요
+                
+                // 임시로 토큰 저장 (테스트용)
+                localStorage.setItem("access_token", "temp_token_" + Date.now());
+                localStorage.setItem("refresh_token", "temp_refresh_token_" + Date.now());
+                
+                // 홈 페이지로 이동
+                setTimeout(() => {
+                    window.location.href = "../home/home.html";
+                }, 500); // 0.5초 후 이동 (로딩 효과를 위해)
+                return; // finally 블록 실행 안 하도록 return
+            } else {
+                // 다른 오류인 경우
+                alert("로그인 중 오류가 발생했습니다: " + error.message);
+                loginBtn.disabled = false;
+                loginBtn.textContent = "로그인";
+            }
         } finally {
-            // 로딩 상태 해제
-            loginBtn.disabled = false;
-            loginBtn.textContent = "로그인";
+            // 로딩 상태 해제 (에러가 발생하지 않은 경우에만)
+            if (loginBtn.disabled) {
+                // 이미 처리된 경우는 제외
+            }
         }
     });
 
