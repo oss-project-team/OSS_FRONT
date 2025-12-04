@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상세페이지</title>
+    <title>상세페이지 - 찾았어요</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -13,20 +13,19 @@
 
 <body>
 
-    <!-- 🔥 모바일 크기 제한 wrapper -->
     <div class="detail-wrapper">
 
-        <!-- 🔙 상단 뒤로가기 -->
+        <!-- 뒤로가기 -->
         <header class="detail-header">
             <button id="backBtn"><i class="material-icons">arrow_back</i></button>
         </header>
 
-        <!-- 🔥 큰 이미지 -->
+        <!-- 이미지 -->
         <div class="detail-image-box">
             <img id="detailImage" src="">
         </div>
 
-        <!-- 🔥 작성자 정보 -->
+        <!-- 작성자 -->
         <div class="detail-user-box">
             <div class="user-left">
                 <div class="user-profile"></div>
@@ -39,12 +38,12 @@
             </div>
         </div>
 
-        <!-- 🔥 글 내용 카드 -->
+        <!-- 내용 -->
         <div class="detail-card">
-            <div class="detail-category" id="detailCategory">카드</div>
+            <div class="detail-category" id="detailCategory"></div>
 
-            <div class="detail-title" id="detailTitle">불러오는 중...</div>
-            <div class="detail-desc" id="detailDesc">내용 로딩 중...</div>
+            <div class="detail-title" id="detailTitle"></div>
+            <div class="detail-desc" id="detailDesc"></div>
 
             <div class="detail-info">
                 <div class="info-row">
@@ -59,14 +58,12 @@
             </div>
         </div>
 
-        <!-- 🔥 하단 버튼 -->
+        <!-- 🔥 쪽지 보내기만 표시 -->
         <div class="detail-btn-wrap">
-            <button id="deleteBtn" class="btn-delete">삭제하기</button>
-            <button id="editBtn" class="btn-edit">수정하기</button>
+            <button id="msgBtn" class="btn-msg">쪽지 보내기</button>
         </div>
 
     </div>
-    <!-- wrapper 끝 -->
 
     <script src="detail.js"></script>
 </body>
