@@ -20,7 +20,7 @@ const MAX_IMAGES = 5;
 // getElementById: HTML 요소에 지정된 id로 요소를 찾아서 가져옴
 const backBtn = document.getElementById('backBtn');                    // 뒤로가기 버튼
 const imageUpload = document.getElementById('imageUpload');            // 파일 선택 input (숨겨진 요소)
-const imagePreviewList = document.getElementById('imagePreviewList');  // 이미지 미리보기를 표시할 영역
+const imageUploadContainer = document.getElementById('imageUploadContainer');  // 이미지 업로드 컨테이너
 const uploadBtn = document.getElementById('uploadBtn');                // 사진 추가 버튼 (보이는 버튼)
 const titleInput = document.getElementById('title');                   // 제목 입력 필드
 const titleCount = document.getElementById('titleCount');              // 제목 글자 수 표시 영역
@@ -34,6 +34,11 @@ const confirmModal = document.getElementById('confirmModal');          // 확인
 const cancelBtn = document.getElementById('cancelBtn');                // 취소 버튼
 const confirmBtn = document.getElementById('confirmBtn');              // 올리기 버튼
 const modalPreview = document.getElementById('modalPreview');          // 팝업 내 미리보기 영역
+const completeModal = document.getElementById('completeModal');        // 등록 완료 팝업
+const completeModalIcon = document.getElementById('completeModalIcon'); // 완료 팝업 아이콘
+const completeModalIconType = document.getElementById('completeModalIconType'); // 완료 팝업 아이콘 타입
+const completeModalMessage = document.getElementById('completeModalMessage'); // 완료 팝업 메시지
+const completeModalCloseBtn = document.getElementById('completeModalCloseBtn'); // 완료 팝업 닫기 버튼
 const imageViewerModal = document.getElementById('imageViewerModal');  // 이미지 뷰어 모달
 const viewerImage = document.getElementById('viewerImage');            // 뷰어에 표시할 이미지
 const imageViewerIndex = document.getElementById('imageViewerIndex');  // 이미지 번호 표시 (예: 1/5)
@@ -63,6 +68,11 @@ imageUpload.addEventListener('change', function(e) {
   // Array.from(): 배열로 변환 (파일 목록을 배열로 만들기)
   const files = Array.from(e.target.files);
   
+  // 파일이 없으면 리턴
+  if (files.length === 0) {
+    return;
+  }
+  
   // 아직 업로드할 수 있는 이미지 개수 계산
   const remainingSlots = MAX_IMAGES - postData.images.length;
   
@@ -73,35 +83,60 @@ imageUpload.addEventListener('change', function(e) {
     files.splice(remainingSlots);
   }
   
-  // 선택한 각 파일에 대해 처리
-  files.forEach(file => {
-    // 이미 5장이면 더 이상 추가하지 않음
-    if (postData.images.length >= MAX_IMAGES) {
-      return; // 이번 반복 종료 (다음 파일로)
-    }
-    
+  // 유효한 파일만 필터링
+  const validFiles = files.filter(file => {
     // 파일 크기 확인 (5MB = 5 * 1024 * 1024 바이트)
     if (file.size > 5 * 1024 * 1024) {
       alert(`${file.name} 파일 크기는 5MB 이하여야 합니다.`);
-      return; // 크기가 너무 크면 이 파일은 건너뜀
+      return false;
     }
+    return true;
+  });
+  
+  // 이미 5장이면 더 이상 추가하지 않음
+  if (postData.images.length >= MAX_IMAGES) {
+    alert(`최대 ${MAX_IMAGES}장까지 업로드할 수 있습니다.`);
+    e.target.value = '';
+    return;
+  }
+  
+  // 모든 파일을 읽기 위한 Promise 배열
+  const readPromises = validFiles.map(file => {
+    return new Promise((resolve, reject) => {
+      // FileReader: 파일을 읽기 위한 객체
+      const reader = new FileReader();
+      
+      // 파일 읽기가 완료되었을 때 실행되는 함수
+      reader.onload = function(e) {
+        resolve({
+          file: file,              // 원본 파일 객체 (나중에 서버에 전송하기 위해)
+          url: e.target.result     // 이미지를 표시하기 위한 URL (base64 형식)
+        });
+      };
+      
+      reader.onerror = function() {
+        reject(new Error(`파일 읽기 실패: ${file.name}`));
+      };
+      
+      // readAsDataURL: 파일을 base64 형식의 데이터 URL로 읽기 (이미지 표시에 사용)
+      reader.readAsDataURL(file);
+    });
+  });
+  
+  // 모든 파일 읽기가 완료되면 미리보기 업데이트
+  Promise.all(readPromises).then(images => {
+    // 이미지 개수 제한 확인
+    const availableSlots = MAX_IMAGES - postData.images.length;
+    const imagesToAdd = images.slice(0, availableSlots);
     
-    // FileReader: 파일을 읽기 위한 객체
-    const reader = new FileReader();
+    // 읽은 이미지들을 postData.images 배열에 추가
+    postData.images.push(...imagesToAdd);
     
-    // 파일 읽기가 완료되었을 때 실행되는 함수
-    reader.onload = function(e) {
-      // 읽은 파일을 postData.images 배열에 추가
-      postData.images.push({
-        file: file,              // 원본 파일 객체 (나중에 서버에 전송하기 위해)
-        url: e.target.result     // 이미지를 표시하기 위한 URL (base64 형식)
-      });
-      // 이미지 미리보기 업데이트
-      updateImagePreview();
-    };
-    
-    // readAsDataURL: 파일을 base64 형식의 데이터 URL로 읽기 (이미지 표시에 사용)
-    reader.readAsDataURL(file);
+    // 이미지 미리보기 업데이트 (한 번만)
+    updateImagePreview();
+  }).catch(error => {
+    console.error('이미지 읽기 오류:', error);
+    alert('이미지를 읽는 중 오류가 발생했습니다.');
   });
   
   // 파일 선택 input을 초기화 (같은 파일을 다시 선택할 수 있도록)
@@ -112,8 +147,15 @@ imageUpload.addEventListener('change', function(e) {
    이미지 미리보기 업데이트 함수
    ======================================== */
 function updateImagePreview() {
-  // 기존 미리보기 모두 제거
-  imagePreviewList.innerHTML = '';
+  // 컨테이너가 없으면 리턴
+  if (!imageUploadContainer) {
+    console.error('imageUploadContainer를 찾을 수 없습니다.');
+    return;
+  }
+  
+  // 기존 미리보기 아이템들 제거 (사진 추가 버튼과 input은 유지)
+  const existingPreviews = imageUploadContainer.querySelectorAll('.image-preview-item');
+  existingPreviews.forEach(item => item.remove());
   
   // 이미지가 5장 미만이면 업로드 버튼 표시, 5장이면 숨김
   if (postData.images.length < MAX_IMAGES) {
@@ -136,8 +178,8 @@ function updateImagePreview() {
       </button>
     `;
     
-    // 생성한 요소를 미리보기 영역에 추가
-    imagePreviewList.appendChild(item);
+    // 생성한 요소를 컨테이너에 추가 (사진 추가 버튼 옆에)
+    imageUploadContainer.appendChild(item);
     
     // 이미지 클릭 이벤트 추가 (이미지 뷰어 열기)
     const imgElement = item.querySelector('img');
@@ -281,40 +323,81 @@ submitBtn.addEventListener('click', function() {
   
   // 제목이 비어있으면
   if (!postData.title.trim()) { // trim(): 앞뒤 공백 제거
-    alert('제목을 입력해주세요.');
+    showCompleteModal('제목을 입력해주세요.', 'error');
     titleInput.focus(); // 제목 입력 필드에 포커스 이동
     return; // 함수 종료
   }
   
   // 설명이 비어있으면
   if (!postData.description.trim()) {
-    alert('자세한 설명을 입력해주세요.');
+    showCompleteModal('자세한 설명을 입력해주세요.', 'error');
     descriptionInput.focus();
     return;
   }
   
   // 카테고리를 선택하지 않았으면
   if (!postData.category) {
-    alert('분실한 물건 카테고리를 선택해주세요.');
+    showCompleteModal('분실한 물건 카테고리를 선택해주세요.', 'error');
     return;
   }
   
   // 장소가 비어있으면
   if (!postData.location.trim()) {
-    alert('분실한 장소를 입력해주세요.');
+    showCompleteModal('분실한 장소를 입력해주세요.', 'error');
     locationInput.focus();
     return;
   }
   
   // 날짜를 선택하지 않았으면
   if (!postData.lostDate) {
-    alert('분실한 날짜를 선택해주세요.');
+    showCompleteModal('분실한 날짜를 선택해주세요.', 'error');
     lostDateInput.focus();
     return;
   }
   
   // 모든 유효성 검사를 통과하면 확인 팝업 표시
   showConfirmModal();
+});
+
+/* ========================================
+   완료 팝업 관련 함수
+   ======================================== */
+// 완료 팝업 표시 함수
+function showCompleteModal(message, type = 'success', onClose = null) {
+  completeModalMessage.textContent = message;
+  
+  if (type === 'success') {
+    completeModalIcon.className = 'modal-icon success';
+    completeModalIconType.textContent = 'check_circle';
+  } else {
+    completeModalIcon.className = 'modal-icon error';
+    completeModalIconType.textContent = 'error';
+  }
+  
+  // 팝업 닫기 콜백 저장
+  if (onClose) {
+    completeModalCloseBtn.onclick = function() {
+      closeCompleteModal();
+      onClose();
+    };
+  } else {
+    completeModalCloseBtn.onclick = closeCompleteModal;
+  }
+  
+  completeModal.classList.add('show');
+}
+
+// 완료 팝업 닫기 함수
+function closeCompleteModal() {
+  completeModal.classList.remove('show');
+}
+
+// 완료 팝업 닫기 이벤트
+completeModalCloseBtn.addEventListener('click', closeCompleteModal);
+completeModal.addEventListener('click', function(e) {
+  if (e.target === completeModal) {
+    closeCompleteModal();
+  }
 });
 
 /* ========================================
@@ -463,12 +546,15 @@ confirmBtn.addEventListener('click', async function() {
     
     // 응답이 성공적이면 (status 200-299)
     if (response.ok) {
-      alert('게시물이 성공적으로 등록되었습니다!');
-      // 홈 페이지로 이동
-      window.location.href = '../home/home.html';
+      // 확인 팝업 닫기
+      confirmModal.classList.remove('show');
+      // 완료 팝업 표시 후 홈 페이지로 이동
+      showCompleteModal('게시물이 성공적으로 등록되었습니다!', 'success', function() {
+        window.location.href = '../home/home.html';
+      });
     } else {
       // 실패 시 에러 메시지 표시
-      alert(data.error || '게시물 등록에 실패했습니다.');
+      showCompleteModal(data.error || '게시물 등록에 실패했습니다.', 'error');
       // 버튼 다시 활성화
       confirmBtn.disabled = false;
       confirmBtn.textContent = '올리기';
@@ -476,9 +562,12 @@ confirmBtn.addEventListener('click', async function() {
   } catch (error) {
     // 네트워크 오류 등 예외 상황 처리
     console.error('게시물 업로드 오류:', error);
+    // 확인 팝업 닫기
+    confirmModal.classList.remove('show');
     // 임시 처리: 서버가 없을 때
-    alert('게시물이 성공적으로 등록되었습니다! (임시)');
-    window.location.href = '../home/home.html';
+    showCompleteModal('게시물이 성공적으로 등록되었습니다! (임시)', 'success', function() {
+      window.location.href = '../home/home.html';
+    });
   }
 });
 
@@ -487,6 +576,12 @@ confirmBtn.addEventListener('click', async function() {
    ======================================== */
 // DOMContentLoaded: HTML 문서가 완전히 로드되었을 때 실행
 document.addEventListener('DOMContentLoaded', function() {
+  // 변수가 제대로 로드되었는지 확인
+  if (!imageUploadContainer) {
+    console.error('imageUploadContainer를 찾을 수 없습니다. HTML을 확인해주세요.');
+    return;
+  }
+  
   // 업로드 버튼 클릭 시 파일 선택 창 열기
   uploadBtn.addEventListener('click', () => {
     imageUpload.click(); // 숨겨진 파일 input 클릭
