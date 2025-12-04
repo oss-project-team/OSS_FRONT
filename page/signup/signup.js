@@ -12,20 +12,65 @@ const signupData = {
 };
 
 let currentStep = 1;
-const totalSteps = 3;
+const totalSteps = 5;
+let emailChecked = false;
 let nicknameChecked = false;
 
 // DOM 요소
 const backBtn = document.getElementById('backBtn');
 const nextBtn1 = document.getElementById('nextBtn1');
 const nextBtn2 = document.getElementById('nextBtn2');
+const nextBtn3 = document.getElementById('nextBtn3');
+const nextBtn4 = document.getElementById('nextBtn4');
 const completeBtn = document.getElementById('completeBtn');
 const agreeAllCheckbox = document.getElementById('agreeAll');
 const agreeCheckboxes = document.querySelectorAll('.agree-checkbox');
 const profileImageInput = document.getElementById('profileImage');
 const profilePreview = document.getElementById('profilePreview');
 const profilePlaceholder = document.getElementById('profilePlaceholder');
+const checkEmailBtn = document.getElementById('checkEmailBtn');
 const checkNicknameBtn = document.getElementById('checkNicknameBtn');
+const modalOverlay = document.getElementById('modalOverlay');
+const modalIcon = document.getElementById('modalIcon');
+const modalIconType = document.getElementById('modalIconType');
+const modalMessage = document.getElementById('modalMessage');
+const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+// 팝업 닫기 콜백 저장
+let modalCloseCallback = null;
+
+// 팝업 표시 함수
+function showModal(message, type = 'success', onClose = null) {
+  modalMessage.textContent = message;
+  
+  if (type === 'success') {
+    modalIcon.className = 'modal-icon success';
+    modalIconType.textContent = 'check_circle';
+  } else {
+    modalIcon.className = 'modal-icon error';
+    modalIconType.textContent = 'error';
+  }
+  
+  modalCloseCallback = onClose;
+  modalOverlay.classList.add('show');
+}
+
+// 팝업 닫기 함수
+function closeModal() {
+  modalOverlay.classList.remove('show');
+  if (modalCloseCallback) {
+    modalCloseCallback();
+    modalCloseCallback = null;
+  }
+}
+
+// 팝업 닫기 이벤트
+modalCloseBtn.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', function(e) {
+  if (e.target === modalOverlay) {
+    closeModal();
+  }
+});
 
 // 단계 표시 함수
 function showStep(step) {
@@ -74,11 +119,9 @@ function goToNextStep() {
   }
 }
 
-// 1단계 검증
+// 1단계 검증 (학교메일)
 function validateStep1() {
   const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const passwordConfirm = document.getElementById('passwordConfirm').value;
   
   let isValid = true;
   
@@ -90,10 +133,24 @@ function validateStep1() {
   } else if (!emailPattern.test(email)) {
     showError('emailError', '학교메일 형식이 올바르지 않습니다.');
     isValid = false;
+  } else if (!emailChecked) {
+    showError('emailError', '이메일 중복 확인을 해주세요.');
+    isValid = false;
+    document.getElementById('email').classList.add('error');
   } else {
     clearError('emailError');
     document.getElementById('email').classList.remove('error');
+    signupData.email = email;
   }
+  
+  return isValid;
+}
+
+// 2단계 검증 (비밀번호)
+function validateStep2() {
+  const password = document.getElementById('password').value;
+  
+  let isValid = true;
   
   // 비밀번호 검증
   if (!password) {
@@ -105,7 +162,18 @@ function validateStep1() {
   } else {
     clearError('passwordError');
     document.getElementById('password').classList.remove('error');
+    signupData.password = password;
   }
+  
+  return isValid;
+}
+
+// 3단계 검증 (비밀번호 확인)
+function validateStep3() {
+  const password = signupData.password;
+  const passwordConfirm = document.getElementById('passwordConfirm').value;
+  
+  let isValid = true;
   
   // 비밀번호 확인 검증
   if (!passwordConfirm) {
@@ -117,11 +185,6 @@ function validateStep1() {
   } else {
     clearError('passwordConfirmError');
     document.getElementById('passwordConfirm').classList.remove('error');
-  }
-  
-  if (isValid) {
-    signupData.email = email;
-    signupData.password = password;
   }
   
   return isValid;
@@ -147,8 +210,8 @@ function clearError(elementId) {
   }
 }
 
-// 약관 동의 검증
-function validateStep2() {
+// 4단계 검증 (약관 동의)
+function validateStep4() {
   const serviceAgreed = document.querySelector('[data-term="service"]').checked;
   const privacyAgreed = document.querySelector('[data-term="privacy"]').checked;
   
@@ -164,8 +227,8 @@ function validateStep2() {
 
 // 약관 동의 상태 업데이트
 function updateAgreeButton() {
-  const isValid = validateStep2();
-  nextBtn2.disabled = !isValid;
+  const isValid = validateStep4();
+  nextBtn4.disabled = !isValid;
 }
 
 // 전체 동의 체크박스
@@ -217,17 +280,69 @@ profilePreview.addEventListener('click', () => {
   profileImageInput.click();
 });
 
+// 이메일 중복 확인
+async function checkEmail() {
+  const email = document.getElementById('email').value.trim();
+  
+  if (!email) {
+    showModal('학교메일을 입력해주세요.', 'error');
+    return;
+  }
+  
+  const emailPattern = /^[^\s@]+@edu\.hanbat\.ac\.kr$/;
+  if (!emailPattern.test(email)) {
+    showModal('학교메일 형식이 올바르지 않습니다.', 'error');
+    return;
+  }
+  
+  checkEmailBtn.disabled = true;
+  checkEmailBtn.textContent = '확인 중...';
+  
+  try {
+    // 백엔드 API 호출
+    const response = await fetch(`/api/v1/auth/check-email?email=${encodeURIComponent(email)}`, {
+      method: 'GET'
+    });
+    
+    const data = await response.json();
+    
+    if (data.available) {
+      showModal('사용 가능한 이메일입니다.', 'success');
+      emailChecked = true;
+      signupData.email = email;
+      document.getElementById('email').classList.remove('error');
+      clearError('emailError');
+    } else {
+      showModal('이미 사용 중인 이메일입니다.', 'error');
+      emailChecked = false;
+      document.getElementById('email').classList.add('error');
+      showError('emailError', '이미 사용 중인 이메일입니다.');
+    }
+  } catch (error) {
+    console.error('이메일 확인 오류:', error);
+    // 임시 처리: 서버 없을 때 자동 통과
+    showModal('사용 가능한 이메일입니다.', 'success');
+    emailChecked = true;
+    signupData.email = email;
+    document.getElementById('email').classList.remove('error');
+    clearError('emailError');
+  } finally {
+    checkEmailBtn.disabled = false;
+    checkEmailBtn.textContent = '중복 확인';
+  }
+}
+
 // 닉네임 중복 확인
 async function checkNickname() {
   const nickname = document.getElementById('nickname').value.trim();
   
   if (!nickname) {
-    alert('닉네임을 입력해주세요.');
+    showModal('닉네임을 입력해주세요.', 'error');
     return;
   }
   
   if (nickname.length < 2 || nickname.length > 10) {
-    alert('닉네임은 2~10자로 입력해주세요.');
+    showModal('닉네임은 2~10자로 입력해주세요.', 'error');
     return;
   }
   
@@ -243,14 +358,14 @@ async function checkNickname() {
     const data = await response.json();
     
     if (data.available) {
-      alert('사용 가능한 닉네임입니다.');
+      showModal('사용 가능한 닉네임입니다.', 'success');
       nicknameChecked = true;
       signupData.nickname = nickname;
       document.getElementById('nickname').classList.remove('error');
       clearError('nicknameError');
       updateCompleteButton();
     } else {
-      alert('이미 사용 중인 닉네임입니다.');
+      showModal('이미 사용 중인 닉네임입니다.', 'error');
       nicknameChecked = false;
       document.getElementById('nickname').classList.add('error');
       showError('nicknameError', '이미 사용 중인 닉네임입니다.');
@@ -258,7 +373,7 @@ async function checkNickname() {
   } catch (error) {
     console.error('닉네임 확인 오류:', error);
     // 임시 처리: 서버 없을 때 자동 통과
-    alert('사용 가능한 닉네임입니다.');
+    showModal('사용 가능한 닉네임입니다.', 'success');
     nicknameChecked = true;
     signupData.nickname = nickname;
     document.getElementById('nickname').classList.remove('error');
@@ -281,16 +396,45 @@ document.addEventListener('DOMContentLoaded', function() {
   // 뒤로가기 버튼
   backBtn.addEventListener('click', goToPreviousStep);
   
-  // 1단계 다음 버튼
+  // 이메일 입력 이벤트
+  document.getElementById('email').addEventListener('input', function() {
+    emailChecked = false;
+  });
+  
+  // 이메일 중복 확인 버튼
+  checkEmailBtn.addEventListener('click', checkEmail);
+  
+  // Enter 키로 이메일 중복 확인
+  document.getElementById('email').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      checkEmail();
+    }
+  });
+  
+  // 1단계 다음 버튼 (학교메일)
   nextBtn1.addEventListener('click', function() {
     if (validateStep1()) {
       goToNextStep();
     }
   });
   
-  // 2단계 다음 버튼
+  // 2단계 다음 버튼 (비밀번호)
   nextBtn2.addEventListener('click', function() {
     if (validateStep2()) {
+      goToNextStep();
+    }
+  });
+  
+  // 3단계 다음 버튼 (비밀번호 확인)
+  nextBtn3.addEventListener('click', function() {
+    if (validateStep3()) {
+      goToNextStep();
+    }
+  });
+  
+  // 4단계 다음 버튼 (약관 동의)
+  nextBtn4.addEventListener('click', function() {
+    if (validateStep4()) {
       goToNextStep();
     }
   });
@@ -314,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // 가입 완료 버튼
   completeBtn.addEventListener('click', async function() {
     if (!nicknameChecked) {
-      alert('닉네임 중복 확인을 해주세요.');
+      showModal('닉네임 중복 확인을 해주세요.', 'error');
       return;
     }
     
@@ -340,18 +484,20 @@ document.addEventListener('DOMContentLoaded', function() {
       const data = await response.json();
       
       if (response.ok) {
-        alert('회원가입이 완료되었습니다!');
-        window.location.href = '../login/login.html';
+        showModal('회원가입이 완료되었습니다!', 'success', function() {
+          window.location.href = '../login/login.html';
+        });
       } else {
-        alert(data.error || '회원가입에 실패했습니다.');
+        showModal(data.error || '회원가입에 실패했습니다.', 'error');
         completeBtn.disabled = false;
         completeBtn.textContent = '가입 완료';
       }
     } catch (error) {
       console.error('회원가입 오류:', error);
       // 임시 처리: 서버 없을 때
-      alert('회원가입이 완료되었습니다! (임시)');
-      window.location.href = '../login/login.html';
+      showModal('회원가입이 완료되었습니다! (임시)', 'success', function() {
+        window.location.href = '../login/login.html';
+      });
     }
   });
   
