@@ -1,0 +1,383 @@
+/* =================== 기본 스타일 =================== */
+body {
+    font-family: 'Pretendard', sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* 모든 페이지 공통 */
+.page {
+    display: none;
+    padding-bottom: 50px;
+}
+
+.page.active {
+    display: block;
+}
+
+/* =================== 헤더 =================== */
+.top-header,
+.sub-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    justify-content: center; /* 제목 가운데 정렬 */
+    position: relative;
+}
+
+.back-btn {
+    position: absolute;
+    left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.sub-header span,
+.top-header span {
+    font-size: 19px;
+}
+
+/* =================== 카드 공통 =================== */
+.card {
+    background: white;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.card-item {
+    padding: 14px 0;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* ✔ 로그인 방식 변경 카드 간 간격 */
+.login-card {
+    margin: 20px;
+    padding: 15px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* =================== 토글 버튼 =================== */
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    background-color: #ccc;
+    border-radius: 24px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+input:checked + .slider {
+    background: #4caf50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* =================== 입력 박스 =================== */
+.input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+textarea.input {
+    resize: none;
+}
+
+/* =================== 버튼 =================== */
+.next-btn {
+    width: 90%;
+    margin: 20px auto;
+    padding: 15px;
+    background: #4b8caf;
+    color: white;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    display: block;
+}
+
+/* =================== 에러 메시지 =================== */
+.error-msg {
+    color: red;
+    font-size: 13px;
+    height: 16px;
+}
+
+
+
+/* ========================================================= */
+/*                  🔥 패턴 입력 UI 강화                     */
+/* ========================================================= */
+
+/* 흰 박스 카드 형태 */
+.pattern-card {
+    background: white;
+    margin: 30px auto;
+    padding: 30px 20px;
+    border-radius: 12px;
+    width: calc(100% - 40px);
+    max-width: 420px;
+    min-height: 380px;
+    position: relative;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 선 그릴 캔버스 */
+.pattern-canvas {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    width: calc(100% - 40px);
+    height: 300px;
+    pointer-events: none;  /* 드래그는 점이 담당 */
+}
+
+/* 3×3 점 박스 */
+.pattern-grid {
+    width: 260px;
+    height: 260px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 22px;
+    justify-items: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.pattern-dot {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #ddd;
+    border: 2px solid #aaa;
+}
+
+.pattern-dot.selected {
+    background: #4b8caf;
+    border-color: #4b8caf;
+}
+
+
+
+/* =================== 회원탈퇴 =================== */
+
+/* ✔ 카드 형태 복원 (흰 박스 2개 유지) */
+.withdraw-card {
+    background: white;
+    margin: 20px;
+    padding: 20px 20px 30px 20px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.withdraw-text {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.survey-item {
+    display: block;
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.agree-row {
+    margin-top: 10px;
+    display: block;
+    font-size: 15px;
+}
+
+.etc-box {
+    width: 100%;
+    height: 80px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #bbb;
+    padding: 10px;
+    resize: none;
+    display: none;
+}
+
+/* =================== 문의하기 =================== */
+.inquiry-card {
+    background: white;
+    padding: 18px;
+    margin: 18px 20px;
+    border-radius: 12px;
+    box-shadow: 0px 1px 4px rgba(0,0,0,0.1);
+}
+
+.inquiry-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.inquiry-meta {
+    font-size: 14px;
+    color: #666;
+}
+
+.inquiry-btn-wrap {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.inquiry-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+}
+
+.edit-btn {
+    background: #4b8caf;
+    color: white;
+}
+
+.delete-btn {
+    background: #d9534f;
+    color: white;
+}
+
+/* 문의 내역 없음 */
+.empty-box {
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+/* 기타 카테고리 입력칸 */
+.etc-input {
+    display: none;
+}
+
+/* =================== 아코디언 =================== */
+.accordion-container {
+    padding: 20px;
+}
+
+.accordion-item {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.08);
+    cursor: pointer;
+}
+
+.accordion-item h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.accordion-content {
+    margin-top: 10px;
+    display: none;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.accordion-item.active .accordion-content {
+    display: block;
+}
+
+/* =================== 팝업 =================== */
+.modal.hidden {
+    display: none;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    background: #4b8caf;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}

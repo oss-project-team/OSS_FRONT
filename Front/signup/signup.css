@@ -1,0 +1,364 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  background: #f7f7f7;
+  min-height: 100vh;
+}
+
+.signup-container {
+  max-width: 100%;
+  min-height: 100vh;
+  background: #f7f7f7;
+}
+
+
+.signup-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 16px 30px 16px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #1e1e1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+}
+
+.back-btn .material-icons {
+  font-size: 24px;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  transition: all 0.3s;
+}
+
+.step-dot.active {
+  background: #009ab7;
+  width: 12px;
+  height: 12px;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: #e0e0e0;
+  max-width: 60px;
+}
+
+.step-line.active {
+  background: #009ab7;
+}
+
+/* 단계 */
+.signup-step {
+  display: none;
+  padding: 40px 20px;
+  min-height: calc(100vh - 60px);
+}
+
+.signup-step.active {
+  display: block;
+}
+
+.step-content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.step-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e1e1e;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* 폼 그룹 */
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.form-group:has(#email) input {
+  padding-right: 110px;
+}
+
+.form-group:has(#nickname) input {
+  padding-right: 110px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #009ab7;
+}
+
+.form-group input.error {
+  border-color: #ff3b30;
+}
+
+.error-message {
+  display: block;
+  font-size: 12px;
+  color: #ff3b30;
+  margin-top: 6px;
+  min-height: 18px;
+}
+
+/* 약관 동의 */
+.terms-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.checkbox-all {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.checkbox-all input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+}
+
+.terms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  cursor: pointer;
+}
+
+.checkbox-item span {
+  flex: 1;
+}
+
+.view-terms-btn {
+  background: none;
+  border: none;
+  color: #009ab7;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.view-terms-btn:hover {
+  text-decoration: underline;
+}
+
+/* 프로필 이미지 */
+.profile-image-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.profile-image-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+}
+
+.profile-placeholder,
+#profilePreview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#profilePreview {
+  object-fit: cover;
+  border: 3px solid #009ab7;
+}
+
+.profile-placeholder .material-icons {
+  font-size: 60px;
+  color: #999;
+}
+
+.profile-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #009ab7;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.profile-upload-btn .material-icons {
+  font-size: 20px;
+}
+
+.profile-hint {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 이메일 중복 확인 */
+.check-email-btn,
+.check-nickname-btn {
+  position: absolute;
+  right: 8px;
+  top: calc(18px + 9px + 23px); /* label 높이(20px) + margin-bottom(8px) + input 중앙 지점(23px = padding-top 14px + input 높이 절반) */
+  transform: translateY(-50%); /* 버튼 자신의 높이 절반만큼 위로 이동하여 완벽한 중앙 정렬 */
+  padding: 8px 16px;
+  background: #009ab7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.check-email-btn:hover,
+.check-nickname-btn:hover {
+  background: #0088a3;
+}
+
+.check-email-btn:disabled,
+.check-nickname-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* 버튼 */
+.next-btn,
+.complete-btn {
+  width: 100%;
+  padding: 16px;
+  background: #009ab7;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: all 0.2s;
+}
+
+.next-btn:hover:not(:disabled),
+.complete-btn:hover:not(:disabled) {
+  background: #0088a3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 154, 183, 0.3);
+}
+
+.next-btn:disabled,
+.complete-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.complete-btn {
+  background: #009ab7;
+}
+
+/* 반응형 */
+@media (max-width: 375px) {
+  .step-content {
+    padding: 0 8px;
+  }
+  
+  .profile-image-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .profile-placeholder,
+  #profilePreview {
+    width: 100px;
+    height: 100px;
+  }
+}
+

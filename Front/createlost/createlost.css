@@ -1,0 +1,1038 @@
+/* ========================================
+   CSS 초기화 및 기본 설정
+   ======================================== */
+
+
+/* 모든 요소의 기본 여백과 패딩을 0으로 초기화 */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* 패딩과 테두리를 요소의 전체 크기에 포함 */
+}
+
+
+/* 전체 페이지 기본 스타일 */
+
+body {
+    /* Pretendard 폰트 사용 (한글 최적화 폰트) */
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    background: #f7f7f7;
+    /* 연한 회색 배경 */
+    min-height: 100vh;
+    /* 최소 높이를 화면 전체 높이로 설정 */
+    padding-bottom: 100px;
+    /* 하단 여백 (네비게이션 바를 위한 공간) */
+}
+
+
+/* ========================================
+   게시물 작성 컨테이너
+   ======================================== */
+
+.create-container {
+    max-width: 100%;
+    /* 최대 너비 100% */
+    min-height: 100vh;
+    /* 최소 높이 화면 전체 */
+    background: #f7f7f7;
+    /* 배경색 */
+}
+
+
+/* ========================================
+   상단 헤더 영역
+   ======================================== */
+
+.create-header {
+    display: flex;
+    /* 플렉스박스 레이아웃 사용 */
+    align-items: center;
+    /* 수직 중앙 정렬 */
+    justify-content: space-between;
+    /* 좌우 양쪽 끝에 배치 */
+    padding: 12px 16px;
+    /* 상하 12px, 좌우 16px 여백 */
+    background: #fff;
+    /* 흰색 배경 */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    /* 그림자 효과 */
+    position: sticky;
+    /* 스크롤 시 상단에 고정 */
+    top: 0;
+    /* 상단에서 0px 위치 */
+    z-index: 100;
+    /* 다른 요소들 위에 표시 */
+}
+
+
+/* 뒤로가기 버튼 */
+
+.back-btn {
+    background: none;
+    /* 배경 없음 */
+    border: none;
+    /* 테두리 없음 */
+    padding: 8px;
+    /* 내부 여백 */
+    cursor: pointer;
+    /* 마우스 커서를 손가락 모양으로 변경 */
+    color: #1e1e1e;
+    /* 어두운 회색 */
+    display: flex;
+    align-items: center;
+    /* 아이콘 수직 중앙 정렬 */
+    justify-content: center;
+    /* 아이콘 수평 중앙 정렬 */
+    width: 40px;
+    height: 40px;
+}
+
+
+/* 뒤로가기 버튼 내부 아이콘 크기 */
+
+.back-btn .material-icons {
+    font-size: 24px;
+}
+
+
+/* 헤더 제목 (페이지 이름) */
+
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+    /* 글자 굵기 */
+    color: #1e1e1e;
+    text-align: center;
+    /* 중앙 정렬 */
+    flex: 1;
+    /* 남은 공간을 모두 차지 */
+}
+
+
+/* ========================================
+   컨텐츠 영역
+   ======================================== */
+
+.create-content {
+    padding: 20px 16px;
+    /* 상하 20px, 좌우 16px 여백 */
+    max-width: 600px;
+    /* 최대 너비 600px */
+    margin: 0 auto;
+    /* 좌우 중앙 정렬 */
+}
+
+
+/* ========================================
+   섹션 공통 스타일
+   ======================================== */
+
+
+/* 업로드 섹션과 폼 섹션 공통 스타일 */
+
+.upload-section,
+.form-section {
+    background: #fff;
+    /* 흰색 배경 */
+    border-radius: 12px;
+    /* 둥근 모서리 */
+    padding: 20px;
+    /* 내부 여백 */
+    margin-bottom: 16px;
+    /* 하단 여백 */
+}
+
+
+/* 섹션 라벨 (예: "제목", "자세한 설명" 등) */
+
+.section-label {
+    display: block;
+    /* 블록 요소로 표시 */
+    font-size: 16px;
+    font-weight: 600;
+    /* 굵은 글씨 */
+    color: #1e1e1e;
+    margin-bottom: 12px;
+    /* 하단 여백 */
+}
+
+
+/* ========================================
+   이미지 업로드 영역
+   ======================================== */
+
+.image-upload-container {
+    display: flex;
+    /* 플렉스박스 레이아웃 */
+    flex-wrap: wrap;
+    /* 요소들이 여러 줄로 배치 가능 */
+    gap: 12px;
+    /* 요소 간 간격 */
+    align-items: flex-start;
+    /* 상단 정렬 */
+}
+
+
+/* 이미지 미리보기 목록 컨테이너 */
+
+.image-preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    /* 이미지들이 여러 줄로 배치 */
+    gap: 12px;
+    /* 이미지 간 간격 */
+    flex: 1;
+    /* 남은 공간 차지 */
+    min-width: 0;
+    /* 최소 너비 0 (줄바꿈을 위해) */
+}
+
+
+/* 이미지 미리보기 아이템 (각 이미지 하나) */
+
+.image-preview-item {
+    position: relative;
+    /* 내부 요소들의 위치 기준점 */
+    width: calc(33.333% - 8px);
+    /* 3개씩 한 줄에 배치 (간격 고려) */
+    aspect-ratio: 1;
+    /* 정사각형 비율 유지 */
+    border-radius: 8px;
+    /* 둥근 모서리 */
+    overflow: hidden;
+    /* 넘치는 부분 숨김 */
+    background: #f0f0f0;
+    /* 연한 회색 배경 */
+}
+
+
+/* 이미지 미리보기 아이템 내부 이미지 */
+
+.image-preview-item img {
+    width: 100%;
+    /* 부모 요소의 100% 너비 */
+    height: 100%;
+    /* 부모 요소의 100% 높이 */
+    object-fit: cover;
+    /* 이미지 비율 유지하며 영역 채우기 */
+    cursor: pointer;
+    /* 클릭 가능 커서 */
+    transition: opacity 0.2s;
+    /* 투명도 변화 애니메이션 */
+}
+
+
+/* 이미지에 마우스 올렸을 때 */
+
+.image-preview-item img:hover {
+    opacity: 0.8;
+    /* 약간 투명하게 */
+}
+
+
+/* 이미지 삭제 버튼 (X 버튼) */
+
+.image-preview-item .remove-btn {
+    position: absolute;
+    /* 부모 요소 기준 절대 위치 */
+    top: 4px;
+    /* 위에서 4px */
+    right: 4px;
+    /* 오른쪽에서 4px */
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    /* 원형 버튼 */
+    background: rgba(0, 0, 0, 0.6);
+    /* 반투명 검은색 배경 */
+    color: #fff;
+    /* 흰색 텍스트/아이콘 */
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+
+/* 삭제 버튼 아이콘 크기 */
+
+.image-preview-item .remove-btn .material-icons {
+    font-size: 18px;
+}
+
+
+/* 이미지 업로드 버튼 (사진 추가 버튼) */
+
+.image-upload-btn {
+    width: calc(33.333% - 8px);
+    /* 이미지와 동일한 크기 */
+    aspect-ratio: 1;
+    /* 정사각형 */
+    border: 2px dashed #ccc;
+    /* 점선 테두리 */
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    /* 세로 방향 배치 */
+    align-items: center;
+    /* 수평 중앙 정렬 */
+    justify-content: center;
+    /* 수직 중앙 정렬 */
+    cursor: pointer;
+    /* 클릭 가능 커서 */
+    background: #fafafa;
+    /* 연한 회색 배경 */
+    transition: all 0.2s;
+    /* 모든 변화에 애니메이션 */
+    color: #666;
+    /* 회색 텍스트 */
+}
+
+
+/* 업로드 버튼에 마우스 올렸을 때 */
+
+.image-upload-btn:hover {
+    border-color: #009ab7;
+    /* 테두리 색상을 메인 컬러로 */
+    background: #f0f9fa;
+    /* 연한 청록색 배경 */
+    color: #009ab7;
+    /* 텍스트 색상을 메인 컬러로 */
+}
+
+
+/* 업로드 버튼 아이콘 */
+
+.image-upload-btn .material-icons {
+    font-size: 32px;
+    margin-bottom: 8px;
+    /* 아이콘과 텍스트 간 간격 */
+}
+
+
+/* 업로드 버튼 텍스트 */
+
+.image-upload-btn span {
+    font-size: 12px;
+}
+
+
+/* 업로드 버튼 숨김 처리 (5장 도달 시) */
+
+.image-upload-btn.hidden {
+    display: none !important;
+    /* 강제로 숨김 (!important: 다른 스타일보다 우선) */
+}
+
+
+/* ========================================
+   입력 필드 스타일
+   ======================================== */
+
+
+/* 텍스트 입력 필드와 텍스트 영역 공통 스타일 */
+
+input[type="text"],
+textarea {
+    width: 100%;
+    /* 전체 너비 */
+    padding: 14px 12px;
+    /* 내부 여백 */
+    border: 1px solid #e0e0e0;
+    /* 연한 회색 테두리 */
+    border-radius: 8px;
+    /* 둥근 모서리 */
+    font-size: 16px;
+    font-family: inherit;
+    /* 부모 요소의 폰트 상속 */
+    background: #fff;
+    /* 흰색 배경 */
+    transition: border-color 0.2s;
+    /* 테두리 색상 변화 애니메이션 */
+}
+
+
+/* 날짜 입력 필드 */
+
+input[type="date"] {
+    width: 100%;
+    padding: 14px 8px;
+    /* 좌우 패딩 약간 줄임 */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background: #fff;
+    transition: border-color 0.2s;
+    color: #1e1e1e;
+    text-align: left;
+    /* 왼쪽 정렬 */
+    position: relative;
+    height: 48px;
+    /* 고정 높이 */
+    line-height: 20px;
+    /* 줄 간격 */
+    box-sizing: border-box;
+    /* 패딩 포함 크기 계산 */
+    display: inline-flex;
+    /* 인라인 플렉스박스 */
+    align-items: center;
+    /* 수직 중앙 정렬 */
+}
+
+
+/* 날짜 선택 캘린더 아이콘 스타일 */
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    /* 클릭 가능 커서 */
+    opacity: 1;
+    /* 완전 불투명 */
+}
+
+
+/* 날짜 입력 필드의 스핀 버튼과 클리어 버튼 숨김 */
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+
+/* 입력 필드에 포커스(클릭)했을 때 */
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+    outline: none;
+    /* 기본 포커스 테두리 제거 */
+    border-color: #009ab7;
+    /* 테두리 색상을 메인 컬러로 */
+}
+
+
+/* 텍스트 영역 (여러 줄 입력) */
+
+textarea {
+    resize: vertical;
+    /* 세로 방향으로만 크기 조절 가능 */
+    min-height: 120px;
+    /* 최소 높이 */
+}
+
+
+/* 글자 수 카운터 */
+
+.char-count {
+    display: block;
+    /* 블록 요소 */
+    text-align: right;
+    /* 오른쪽 정렬 */
+    font-size: 12px;
+    color: #999;
+    /* 연한 회색 */
+    margin-top: 6px;
+    /* 위쪽 여백 */
+}
+
+
+/* 설명 입력 힌트 텍스트 */
+
+.description-hint {
+    font-size: 11px;
+    color: #666;
+    /* 중간 회색 */
+    margin-top: 8px;
+    line-height: 1.6;
+    /* 줄 간격 */
+    padding: 12px;
+    /* 내부 여백 */
+    background: #f7f7f7;
+    /* 연한 회색 배경 */
+    border-radius: 6px;
+    /* 둥근 모서리 */
+}
+
+
+/* ========================================
+   카테고리 그리드
+   ======================================== */
+
+.category-grid {
+    display: grid;
+    /* 그리드 레이아웃 사용 */
+    grid-template-columns: repeat(3, 1fr);
+    /* 3열 그리드 (각 열 동일한 너비) */
+    gap: 10px;
+    /* 그리드 아이템 간 간격 */
+}
+
+
+/* 카테고리 버튼 (의류, 지갑/카드 등) */
+
+.category-btn {
+    padding: 12px;
+    /* 내부 여백 */
+    border: 1px solid #e0e0e0;
+    /* 연한 회색 테두리 */
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    color: #666;
+    /* 회색 텍스트 */
+    cursor: pointer;
+    transition: all 0.2s;
+    /* 모든 변화에 애니메이션 */
+    font-weight: 500;
+    /* 중간 굵기 */
+}
+
+
+/* 카테고리 버튼에 마우스 올렸을 때 */
+
+.category-btn:hover {
+    border-color: #009ab7;
+    /* 테두리를 메인 컬러로 */
+    color: #009ab7;
+    /* 텍스트 색상을 메인 컬러로 */
+}
+
+
+/* 선택된 카테고리 버튼 */
+
+.category-btn.active {
+    background: #009ab7;
+    /* 메인 컬러 배경 */
+    color: #fff;
+    /* 흰색 텍스트 */
+    border-color: #009ab7;
+}
+
+
+/* ========================================
+   작성 완료 버튼
+   ======================================== */
+
+.submit-btn {
+    width: 100%;
+    /* 전체 너비 */
+    padding: 16px;
+    /* 내부 여백 */
+    background: #009ab7;
+    /* 메인 컬러 배경 */
+    color: #fff;
+    /* 흰색 텍스트 */
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    /* 굵은 글씨 */
+    cursor: pointer;
+    margin-top: 8px;
+    /* 위쪽 여백 */
+    transition: all 0.2s;
+    /* 애니메이션 */
+}
+
+
+/* 버튼에 마우스 올렸을 때 (비활성화 상태가 아닐 때만) */
+
+.submit-btn:hover:not(:disabled) {
+    background: #0088a3;
+    /* 약간 어두운 청록색 */
+    transform: translateY(-1px);
+    /* 1px 위로 이동 (들어올린 효과) */
+    box-shadow: 0 4px 12px rgba(0, 154, 183, 0.3);
+    /* 그림자 효과 */
+}
+
+
+/* 버튼 비활성화 상태 (작성 중일 때) */
+
+.submit-btn:disabled {
+    background: #ccc;
+    /* 회색 배경 */
+    cursor: not-allowed;
+    /* 금지 커서 */
+}
+
+
+/* ========================================
+   모달 (팝업창) 스타일
+   ======================================== */
+
+
+/* 모달 오버레이 (배경 반투명 검은색) */
+
+.modal-overlay {
+    display: none;
+    /* 기본적으로 숨김 */
+    position: fixed;
+    /* 화면에 고정 위치 */
+    top: 0;
+    /* 상단 */
+    left: 0;
+    /* 왼쪽 */
+    right: 0;
+    /* 오른쪽 */
+    bottom: 0;
+    /* 하단 */
+    background: rgba(0, 0, 0, 0.5);
+    /* 반투명 검은색 배경 */
+    z-index: 1000;
+    /* 다른 요소들 위에 표시 */
+    align-items: center;
+    /* 수직 중앙 정렬 */
+    justify-content: center;
+    /* 수평 중앙 정렬 */
+    padding: 20px;
+    /* 여백 */
+}
+
+
+/* 모달 표시 클래스가 추가되면 */
+
+.modal-overlay.show {
+    display: flex;
+    /* 플렉스박스로 표시 */
+}
+
+
+/* 모달 내용 컨테이너 */
+
+.modal-content {
+    background: #fff;
+    /* 흰색 배경 */
+    border-radius: 16px;
+    /* 둥근 모서리 */
+    padding: 24px;
+    /* 내부 여백 */
+    max-width: 400px;
+    /* 최대 너비 */
+    width: 100%;
+    /* 반응형 너비 */
+    max-height: 80vh;
+    /* 최대 높이 (화면의 80%) */
+    overflow-y: auto;
+    /* 내용이 많으면 스크롤 가능 */
+    animation: modalSlideIn 0.3s ease-out;
+    /* 나타나는 애니메이션 */
+}
+
+
+/* 모달 나타나는 애니메이션 */
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        /* 위에서 20px 아래로 */
+        opacity: 0;
+        /* 투명 */
+    }
+    to {
+        transform: translateY(0);
+        /* 원래 위치 */
+        opacity: 1;
+        /* 불투명 */
+    }
+}
+
+
+/* 모달 제목 */
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e1e1e;
+    margin-bottom: 20px;
+    text-align: center;
+    /* 중앙 정렬 */
+}
+
+
+/* 모달 미리보기 영역 */
+
+.modal-preview {
+    margin-bottom: 24px;
+}
+
+
+/* 미리보기 아이템 (각 정보 하나) */
+
+.preview-item {
+    margin-bottom: 12px;
+    /* 하단 여백 */
+    padding: 12px;
+    /* 내부 여백 */
+    background: #f7f7f7;
+    /* 연한 회색 배경 */
+    border-radius: 8px;
+}
+
+
+/* 미리보기 라벨 (예: "제목", "카테고리" 등) */
+
+.preview-item-label {
+    font-size: 12px;
+    color: #999;
+    /* 연한 회색 */
+    margin-bottom: 4px;
+}
+
+
+/* 미리보기 값 (실제 내용) */
+
+.preview-item-value {
+    font-size: 14px;
+    color: #1e1e1e;
+    word-break: break-word;
+    /* 긴 단어 줄바꿈 */
+}
+
+
+/* 미리보기 이미지 목록 */
+
+.preview-images {
+    display: flex;
+    gap: 8px;
+    /* 이미지 간 간격 */
+    flex-wrap: wrap;
+    /* 여러 줄로 배치 */
+    margin-top: 8px;
+}
+
+
+/* 미리보기 이미지 */
+
+.preview-images img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    /* 비율 유지하며 영역 채우기 */
+    border-radius: 6px;
+}
+
+
+/* 모달 버튼 컨테이너 */
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    /* 버튼 간 간격 */
+}
+
+
+/* 모달 버튼 공통 스타일 */
+
+.modal-btn {
+    flex: 1;
+    /* 동일한 너비로 배분 */
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    /* 애니메이션 */
+}
+
+
+/* 취소 버튼 */
+
+.cancel-btn {
+    background: #f0f0f0;
+    /* 연한 회색 배경 */
+    color: #666;
+}
+
+
+/* 취소 버튼에 마우스 올렸을 때 */
+
+.cancel-btn:hover {
+    background: #e0e0e0;
+    /* 조금 더 진한 회색 */
+}
+
+
+/* 확인 버튼 */
+
+.confirm-btn {
+    background: #009ab7;
+    /* 메인 컬러 */
+    color: #fff;
+}
+
+
+/* 확인 버튼에 마우스 올렸을 때 */
+
+.confirm-btn:hover {
+    background: #0088a3;
+    /* 약간 어두운 청록색 */
+}
+
+
+/* ========================================
+   이미지 뷰어 모달 (큰 이미지 보기)
+   ======================================== */
+
+.image-viewer-modal {
+    display: none;
+    /* 기본적으로 숨김 */
+    background: rgba(0, 0, 0, 0.9);
+    /* 거의 불투명한 검은색 배경 */
+    z-index: 2000;
+    /* 다른 모달보다도 위에 표시 */
+}
+
+
+/* 이미지 뷰어 표시 클래스 */
+
+.image-viewer-modal.show {
+    display: flex;
+    /* 플렉스박스로 표시 */
+}
+
+
+/* 이미지 뷰어 내용 */
+
+.image-viewer-content {
+    position: relative;
+    /* 내부 요소들의 위치 기준 */
+    width: 90%;
+    /* 너비의 90% */
+    max-width: 900px;
+    /* 최대 너비 */
+    height: 90%;
+    /* 높이의 90% */
+    max-height: 90vh;
+    /* 최대 높이 (화면의 90%) */
+    display: flex;
+    align-items: center;
+    /* 수직 중앙 정렬 */
+    justify-content: center;
+    /* 수평 중앙 정렬 */
+}
+
+
+/* 뷰어 내부 이미지 */
+
+.image-viewer-content img {
+    max-width: 100%;
+    /* 최대 너비 100% */
+    max-height: 100%;
+    /* 최대 높이 100% */
+    object-fit: contain;
+    /* 비율 유지하며 영역 안에 맞춤 */
+    border-radius: 8px;
+}
+
+
+/* 뷰어 닫기 버튼 */
+
+.image-viewer-close {
+    position: absolute;
+    /* 절대 위치 */
+    top: 16px;
+    /* 위에서 16px */
+    right: 16px;
+    /* 오른쪽에서 16px */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    /* 원형 */
+    background: rgba(0, 0, 0, 0.6);
+    /* 반투명 검은색 */
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    /* 이미지보다 위에 표시 */
+    transition: background 0.2s;
+    /* 배경색 변화 애니메이션 */
+}
+
+
+/* 닫기 버튼에 마우스 올렸을 때 */
+
+.image-viewer-close:hover {
+    background: rgba(0, 0, 0, 0.8);
+    /* 더 진한 검은색 */
+}
+
+
+/* 닫기 버튼 아이콘 */
+
+.image-viewer-close .material-icons {
+    font-size: 24px;
+}
+
+
+/* 이미지 정보 표시 (예: "1 / 5") */
+
+.image-viewer-info {
+    position: absolute;
+    bottom: 16px;
+    /* 아래에서 16px */
+    left: 50%;
+    /* 왼쪽에서 50% */
+    transform: translateX(-50%);
+    /* 자신의 너비의 50%만큼 왼쪽으로 이동 (중앙 정렬) */
+    background: rgba(0, 0, 0, 0.6);
+    /* 반투명 검은색 배경 */
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    /* 둥근 모서리 */
+    font-size: 14px;
+}
+
+
+/* 이전/다음 이미지 버튼 공통 스타일 */
+
+.image-viewer-prev,
+.image-viewer-next {
+    position: absolute;
+    top: 50%;
+    /* 위에서 50% */
+    transform: translateY(-50%);
+    /* 자신의 높이의 50%만큼 위로 이동 (수직 중앙) */
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    /* 원형 */
+    background: rgba(0, 0, 0, 0.6);
+    /* 반투명 검은색 */
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    z-index: 10;
+}
+
+
+/* 이전/다음 버튼에 마우스 올렸을 때 */
+
+.image-viewer-prev:hover,
+.image-viewer-next:hover {
+    background: rgba(0, 0, 0, 0.8);
+    /* 더 진한 검은색 */
+}
+
+
+/* 이전 이미지 버튼 위치 */
+
+.image-viewer-prev {
+    left: 16px;
+    /* 왼쪽에서 16px */
+}
+
+
+/* 다음 이미지 버튼 위치 */
+
+.image-viewer-next {
+    right: 16px;
+    /* 오른쪽에서 16px */
+}
+
+
+/* 이전/다음 버튼 아이콘 크기 */
+
+.image-viewer-prev .material-icons,
+.image-viewer-next .material-icons {
+    font-size: 32px;
+}
+
+
+/* 이전/다음 버튼 비활성화 상태 (첫 번째/마지막 이미지일 때) */
+
+.image-viewer-prev:disabled,
+.image-viewer-next:disabled {
+    opacity: 0.3;
+    /* 투명하게 */
+    cursor: not-allowed;
+    /* 금지 커서 */
+}
+
+
+/* ========================================
+   반응형 디자인 (작은 화면용)
+   ======================================== */
+
+
+/* 화면 너비가 375px 이하일 때 적용되는 스타일 */
+
+@media (max-width: 375px) {
+    /* 컨텐츠 영역 패딩 줄이기 */
+    .create-content {
+        padding: 16px 12px;
+        /* 여백 줄임 */
+    }
+    /* 카테고리 그리드를 2열로 변경 */
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2열 그리드 */
+    }
+    /* 이미지 뷰어 버튼 크기 줄이기 */
+    .image-viewer-prev,
+    .image-viewer-next {
+        width: 36px;
+        /* 작은 화면에서는 더 작게 */
+        height: 36px;
+    }
+    /* 이미지 뷰어 버튼 아이콘 크기 줄이기 */
+    .image-viewer-prev .material-icons,
+    .image-viewer-next .material-icons {
+        font-size: 24px;
+    }
+}
+
+#uploadModal {
+    display:none;
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.55);
+    align-items:center;
+    justify-content:center;
+    z-index:3000;
+}
+#uploadModal.show{display:flex;}
+
+.upload-modal-box{
+    background:#fff;
+    width:280px;
+    padding:24px 20px;
+    border-radius:14px;
+    text-align:center;
+    box-shadow:0 4px 18px rgba(0,0,0,0.25);
+}
+
+.upload-modal-title{
+    font-size:17px;
+    font-weight:600;
+    margin-bottom:18px;
+}
+
+.upload-ok-btn{
+    width:120px;
+    height:42px;
+    background:#009ab7;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    margin:auto;
+}
+.upload-ok-btn:hover{background:#007ea0;}

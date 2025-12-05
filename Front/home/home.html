@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>찾아밭 - 홈</title>
+
+    <!-- Pretendard -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- 홈 CSS -->
+    <link rel="stylesheet" href="home.css">
+</head>
+
+<body>
+
+    <!-- 🔥 여기 추가 -->
+    <div class="page-wrapper">
+
+        <!-- 상단 헤더 -->
+        <header class="header">
+            <div class="header-left">
+                <img src="../../aseet/images/logo.png" class="logo" alt="logo">
+            </div>
+
+            <div class="header-right">
+                <button class="icon-btn search-btn">
+                    <i class="material-icons">search</i>
+                </button>
+
+                <button class="icon-btn notification-btn">
+                    <i class="material-icons">notifications</i>
+                    <span class="notification-badge"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 게시판 전환 -->
+        <section class="board-switch">
+            <button id="foundTab" class="page-title">
+                찾았어요!
+                <i class="material-icons expand-icon">expand_more</i>
+            </button>
+
+            <div class="toggle-wrap">
+                <span>해결 중만 보기</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggleSolved">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </section>
+
+        <!-- 카테고리 -->
+        <div class="category-scroll">
+            <button class="category active">전체</button>
+            <button class="category">의류</button>
+            <button class="category">지갑/카드</button>
+            <button class="category">서류</button>
+            <button class="category">귀금속</button>
+            <button class="category">전자기기</button>
+        </div>
+
+        <!-- 게시물 목록 -->
+        <section class="card-list" id="cardList"></section>
+
+        <!-- 글쓰기 버튼 -->
+        <button class="write-btn">
+            <i class="material-icons write-icon">add</i>
+            <span class="write-text">글쓰기</span>
+        </button>
+
+        <!-- 하단 네비 -->
+        <nav class="bottom-nav">
+            <button class="nav-item">
+                <i class="material-icons nav-icon">mail</i>
+                <span class="nav-label">쪽지함</span>
+            </button>
+
+            <button class="nav-item active">
+                <i class="material-icons nav-icon">home</i>
+                <span class="nav-label">홈</span>
+            </button>
+
+            <button class="nav-item">
+                <i class="material-icons nav-icon">person</i>
+                <span class="nav-label">마이페이지</span>
+            </button>
+        </nav>
+
+    </div>
+    <!-- page-wrapper 끝 -->
+
+    <!-- JS -->
+    <script src="home.js"></script>
+</body>
+
+</html>

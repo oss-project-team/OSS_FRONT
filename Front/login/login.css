@@ -1,0 +1,113 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.logo {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 40px auto;
+    display: block;
+}
+
+label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #949494;
+    font-weight: 400;
+}
+
+input {
+    width: 100%;
+    padding: 14px 0;
+    margin-bottom: 25px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+    text-align: left;
+    display: block;
+    color: #1e1e1e;
+    background-color: transparent;
+    height: 48px;
+    line-height: 20px;
+    outline: none;
+}
+
+input::placeholder {
+    color: #1e1e1e;
+}
+
+input:focus {
+    border-bottom-color: #009ab7;
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    background-color: #009ab7;
+    border: none;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0088a3;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.menu {
+    margin-top: 25px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.menu-left {
+    text-align: left;
+}
+
+.menu-right {
+    text-align: right;
+}
+
+.menu a {
+    color: #949494;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.menu a:hover {
+    color: #009ab7;
+}

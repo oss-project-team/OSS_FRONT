@@ -1,0 +1,119 @@
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',sans-serif;background:#f4f4f4;}
+
+/* ───────────────────────────── CONTACT 헤더 완전 동일 ───────────────────────────── */
+.top-header{
+    height:55px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:sticky;
+    top:0;
+    z-index:10;
+    border-bottom:1px solid #ddd;
+}
+
+.top-header > span{
+    font-size:18px;
+    font-weight:700;
+}
+
+.back-btn{
+    position:absolute;
+    left:18px;
+    background:none;
+    border:none;
+    cursor:pointer;
+}
+
+.back-btn i{
+    font-size:24px;
+    color:#000;
+}
+
+.right-icons{
+    position:absolute;
+    right:18px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+/* 아이콘 (contact와 동일 ON=파랑 , OFF=회색 ) */
+.notice-bell{font-size:24px;color:#000000; cursor:pointer;}
+.notice-bell.off{color:#bbbbbb;}
+
+.settings-icon{font-size:24px;color:#5D8AA8;cursor:pointer;}
+.notice-bell:hover,
+.settings-icon:hover{
+    color:#009ab7;
+}
+
+
+/* ───────────────────────────── 알림 리스트 ───────────────────────────── */
+.notice-list{
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.notice-card{
+    background:#fff;
+    border-radius:15px;
+    padding:18px;
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
+    border:1px solid #e2e2e2;
+    cursor:pointer;
+    transition:0.2s;
+}
+.notice-card:hover{background:#fafafa;}
+
+.notice-header{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.notice-title{font-size:15px;font-weight:600;flex:1;}
+.notice-date{font-size:12px;color:#777;}
+
+/* ● 읽지 않음 붉은 점 */
+.unread-dot{
+    width:7px;height:7px;
+    background:#ff3b30;border-radius:50%;
+}
+.notice-item[data-read="true"] .unread-dot{opacity:0;}
+
+/* 내용 아코디언 */
+.notice-content{
+    max-height:0;
+    overflow:hidden;
+    margin-top:10px;
+    font-size:14px;
+    color:#444;
+    line-height:1.6;
+    transition:max-height .3s ease;
+}
+.notice-item.open .notice-content{max-height:200px;}
+
+/* 태그 구분 */
+.tag{
+    font-size:12px;
+    padding:2px 6px;
+    border-radius:6px;
+    color:#fff;
+    font-weight:600;
+}
+.tag.notice{background:#505050;}
+.tag.message{background:#4A6CF7;}
+
+/* 쪽지 버튼 */
+.msg-btn{
+    margin-top:10px;padding:7px 12px;
+    background:#4A6CF7;color:#fff;
+    border:none;border-radius:6px;cursor:pointer;
+    font-size:13px;
+}
+.msg-btn:hover{background:#3a56c9;}

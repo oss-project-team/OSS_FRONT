@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>찾아밭 - 회원가입</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+
+  <div class="signup-container">
+    <!-- 상단 헤더 -->
+    <header class="signup-header">
+      <button class="back-btn" id="backBtn">
+        <i class="material-icons">arrow_back</i>
+      </button>
+      <div class="step-indicator">
+        <div class="step-dot active" data-step="1"></div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step="3"></div>
+      </div>
+    </header>
+
+    <!-- 1단계: 기본 정보 -->
+    <section class="signup-step active" id="step1">
+      <div class="step-content">
+        <h2 class="step-title">기본 정보 입력</h2>
+        
+        <div class="form-group">
+          <label for="email">학교메일</label>
+          <input type="email" id="email" placeholder="email@edu.hanbat.ac.kr" required>
+          <span class="error-message" id="emailError"></span>
+          <button class="check-email-btn" id="checkEmailBtn">중복 확인</button>
+        </div>
+
+        <div class="form-group">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
+          <span class="error-message" id="passwordError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="passwordConfirm">비밀번호 확인</label>
+          <input type="password" id="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" required>
+          <span class="error-message" id="passwordConfirmError"></span>
+        </div>
+
+        <button class="next-btn" id="nextBtn1">다음</button>
+      </div>
+    </section>
+
+    <!-- 2단계: 약관 동의 -->
+    <section class="signup-step" id="step2">
+      <div class="step-content">
+        <h2 class="step-title">약관 동의</h2>
+        
+        <div class="terms-container">
+          <label class="checkbox-all">
+            <input type="checkbox" id="agreeAll">
+            <span>전체 동의</span>
+          </label>
+
+          <div class="terms-list">
+            <label class="checkbox-item">
+              <input type="checkbox" class="agree-checkbox" data-term="service">
+              <span>서비스 이용약관 동의 (필수)</span>
+              <button class="view-terms-btn" data-term="service">보기</button>
+            </label>
+            
+            <label class="checkbox-item">
+              <input type="checkbox" class="agree-checkbox" data-term="privacy">
+              <span>개인정보 처리방침 동의 (필수)</span>
+              <button class="view-terms-btn" data-term="privacy">보기</button>
+            </label>
+            
+            <label class="checkbox-item">
+              <input type="checkbox" class="agree-checkbox" data-term="marketing">
+              <span>마케팅 정보 수신 동의 (선택)</span>
+              <button class="view-terms-btn" data-term="marketing">보기</button>
+            </label>
+          </div>
+        </div>
+
+        <button class="next-btn" id="nextBtn2" disabled>다음</button>
+      </div>
+    </section>
+
+    <!-- 3단계: 프로필 설정 -->
+    <section class="signup-step" id="step3">
+      <div class="step-content">
+        <h2 class="step-title">프로필 설정</h2>
+        
+        <div class="profile-image-section">
+          <div class="profile-image-container">
+            <img id="profilePreview" src="" alt="프로필 사진" style="display: none;">
+            <div class="profile-placeholder" id="profilePlaceholder">
+              <i class="material-icons">person</i>
+            </div>
+            <label for="profileImage" class="profile-upload-btn">
+              <i class="material-icons">camera_alt</i>
+            </label>
+            <input type="file" id="profileImage" accept="image/*" style="display: none;">
+          </div>
+          <p class="profile-hint">프로필 사진을 등록해주세요</p>
+        </div>
+
+        <div class="form-group">
+          <label for="nickname">닉네임</label>
+          <input type="text" id="nickname" placeholder="닉네임을 입력하세요" required>
+          <span class="error-message" id="nicknameError"></span>
+          <button class="check-nickname-btn" id="checkNicknameBtn">중복 확인</button>
+        </div>
+
+        <button class="complete-btn" id="completeBtn" disabled>가입 완료</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="signup.js"></script>
+</body>
+</html>
+

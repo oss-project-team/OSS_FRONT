@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>쪽지함</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="contact.css">
+</head>
+
+<body>
+
+<!-- ================== 쪽지 목록 화면 ================== -->
+<div id="contactList" class="active">
+
+<header class="top-header">
+    <span>쪽지함</span>
+
+    <div class="right-icons">
+        <i class="material-icons" id="noticeBtn">notifications</i>
+        <i class="material-icons" id="settingBtn">settings</i>
+    </div>
+</header>
+
+<div class="contact-wrapper">
+
+    <!-- ================= 카드 1 (예시) ================= -->
+    <!-- 🔥 아래 두줄(제목+카테고리 Placeholder 영역 추가됨) -->
+    <div class="msg-card" id="card-친구A" onclick="openChat('친구A')">
+        <div class="avatar"></div>
+        <div class="text-box">
+            <p class="name">친구A <span id="dot-친구A" class="unread-dot"></span></p>
+
+            <!-- 🔥 detail에서 넘어온 제목/카테고리 표시 -->
+            <p class="sub-info" id="info-친구A">게시글 제목 · 카테고리</p> <!-- 표시될 영역 -->
+
+            <p id="preview-친구A" class="preview">최근 대화 없음</p>
+        </div>
+        <button class="delete-btn" onclick="deleteChat('친구A',event)"><i class="material-icons">delete</i></button>
+    </div>
+
+    <!-- 동일 방식으로 B,C,D에도 sub-info 영역 추가 -->
+    <div class="msg-card" id="card-친구B" onclick="openChat('친구B')">
+        <div class="avatar"></div>
+        <div class="text-box">
+            <p class="name">친구B <span id="dot-친구B" class="unread-dot"></span></p>
+            <p class="sub-info" id="info-친구B"></p> <!-- 🔥 추가 -->
+            <p id="preview-친구B" class="preview">최근 대화 없음</p>
+        </div>
+        <button class="delete-btn" onclick="deleteChat('친구B',event)"><i class="material-icons">delete</i></button>
+    </div>
+
+    <div class="msg-card" id="card-친구C" onclick="openChat('친구C')">
+        <div class="avatar"></div>
+        <div class="text-box">
+            <p class="name">친구C <span id="dot-친구C" class="unread-dot"></span></p>
+            <p class="sub-info" id="info-친구C"></p> <!-- 🔥 추가 -->
+            <p id="preview-친구C" class="preview">최근 대화 없음</p>
+        </div>
+        <button class="delete-btn" onclick="deleteChat('친구C',event)"><i class="material-icons">delete</i></button>
+    </div>
+
+    <div class="msg-card" id="card-친구D" onclick="openChat('친구D')">
+        <div class="avatar"></div>
+        <div class="text-box">
+            <p class="name">친구D <span id="dot-친구D" class="unread-dot"></span></p>
+            <p class="sub-info" id="info-친구D"></p> <!-- 🔥 추가 -->
+            <p id="preview-친구D" class="preview">최근 대화 없음</p>
+        </div>
+        <button class="delete-btn" onclick="deleteChat('친구D',event)"><i class="material-icons">delete</i></button>
+    </div>
+
+</div>
+</div>
+
+<!-- ================== 채팅창 ================== -->
+<div id="chatWindow">
+
+<header class="chat-header">
+    <button class="back-btn" onclick="closeChat()"><i class="material-icons">arrow_back</i></button>
+    <span id="chatName"></span>
+
+    <button class="chat-bell-btn" onclick="toggleChatAlarm()">
+        <i id="chatBellIcon" class="material-icons chat-bell-icon">notifications</i>
+    </button>
+</header>
+
+<div id="chatContent" class="chat-content"></div>
+
+<div class="chat-input-area">
+    <label class="img-upload">
+        📎<input type="file" accept="image/*" onchange="sendImage(event)">
+    </label>
+    <input id="chatInput" placeholder="메시지를 입력하세요" onkeydown="handleEnter(event)">
+    <button class="send-btn" onclick="sendMessage()">➤</button>
+</div>
+</div>
+
+<!-- ================== 삭제 팝업 ================== -->
+<div id="deleteModal" class="modal-bg">
+    <div class="modal-box">
+        <p id="deleteText">정말 삭제하시겠습니까?</p>
+        <div class="btn-area">
+            <button id="deleteConfirm" class="ok-btn">확인</button>
+            <button id="deleteCancel" class="cancel-btn">취소</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================== 이미지 팝업 ================== -->
+<div id="imgModal" class="img-modal">
+    <span class="close-modal">&times;</span>
+    <img id="modalImg" class="modal-content-img">
+</div>
+
+<!-- ================== 하단바 ================== -->
+<nav class="bottom-nav">
+    <button class="nav-item active"><i class="material-icons nav-icon">mail</i><span class="nav-label">쪽지함</span></button>
+    <button class="nav-item"><i class="material-icons nav-icon">home</i><span class="nav-label">홈</span></button>
+    <button class="nav-item"><i class="material-icons nav-icon">person</i><span class="nav-label">마이페이지</span></button>
+</nav>
+
+<script src="contact.js"></script>
+</body>
+</html>

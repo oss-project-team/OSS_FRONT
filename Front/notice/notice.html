@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알림함</title>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="notice.css">
+
+</head>
+<body>
+
+<!-- ────────────────── CONTACT UI 동일 적용 헤더 ────────────────── -->
+<header class="top-header">
+    <button class="back-btn"><i class="material-icons">arrow_back</i></button>
+    <span>알림함</span>
+
+    <div class="right-icons">
+        <i id="noticeBell" class="material-icons notice-bell">notifications</i>
+        <i class="material-icons settings-icon">settings</i>
+    </div>
+</header>
+
+
+<!-- ────────────────── 알림 리스트 ────────────────── -->
+<div class="notice-list">
+
+    <!-- 공지 -->
+    <div class="notice-card notice-item" data-type="notice" data-read="false">
+        <div class="notice-header">
+            <span class="unread-dot"></span>
+            <span class="tag notice">공지</span>
+            <div class="notice-title">앱 업데이트 안내</div>
+            <div class="notice-date">2025-12-04</div>
+        </div>
+        <div class="notice-content">
+            이번 업데이트에서는 안정성 개선 및 새로운 기능이 추가되었습니다.
+        </div>
+    </div>
+
+    <div class="notice-card notice-item" data-type="notice" data-read="false">
+        <div class="notice-header">
+            <span class="unread-dot"></span>
+            <span class="tag notice">공지</span>
+            <div class="notice-title">시스템 점검 예정 안내</div>
+            <div class="notice-date">2025-12-04</div>
+        </div>
+        <div class="notice-content">
+            다음 주 금요일 오전 2시부터 5시까지 서버 점검이 진행됩니다.
+        </div>
+    </div>
+
+    <!-- 쪽지 -->
+    <div class="notice-card notice-item" data-type="message" data-read="false">
+        <div class="notice-header">
+            <span class="unread-dot"></span>
+            <span class="tag message">쪽지</span>
+            <div class="notice-title">물건을 주웠습니다</div>
+            <div class="notice-date">2025-12-05</div>
+        </div>
+        <div class="notice-content">
+            도서관에서 주웠습니다.<br><br>
+            <button class="msg-btn">쪽지함</button>
+        </div>
+    </div>
+
+    <div class="notice-card notice-item" data-type="message" data-read="true">
+        <div class="notice-header">
+            <span class="unread-dot"></span>
+            <span class="tag message">쪽지</span>
+            <div class="notice-title">습득물 관련 문의드립니다</div>
+            <div class="notice-date">2025-12-04</div>
+        </div>
+        <div class="notice-content">
+            혹시 찾으시는 물건인지 확인 부탁드립니다.<br><br>
+            <button class="msg-btn">쪽지함</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="notice.js"></script>
+</body>
+</html>

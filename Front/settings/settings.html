@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>설정</title>
+    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+
+<!-- ========================================================= -->
+<!-- ① 설정 메인 -->
+<!-- ========================================================= -->
+<section class="page active" id="settingsMain">
+    <header class="top-header">
+        <button class="back-btn" onclick="goBackFromSettings()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>설정</span>
+    </header>
+
+    <div class="card">
+        <h3 class="card-title">계정 및 보안</h3>
+        <div class="card-item" onclick="openPwCheckPage()">로그인 방식 변경</div>
+        <div class="card-item" onclick="openLogoutConfirm()">로그아웃</div>
+        <div class="card-item" onclick="openWithdrawPage()">회원탈퇴</div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">알림 설정</h3>
+
+        <div class="toggle-row">
+            <span>소리 알림</span>
+            <label class="switch">
+                <input type="checkbox" checked id="soundToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-row">
+            <span>진동 알림</span>
+            <label class="switch">
+                <input type="checkbox" checked id="vibrationToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-row">
+            <span>기기 알림</span>
+            <label class="switch">
+                <input type="checkbox" checked id="deviceToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">고객지원 및 기타</h3>
+        <div class="card-item" onclick="openSupportMainPage()">문의하기</div>
+        <div class="card-item" onclick="openTermsPage()">서비스 이용약관 확인</div>
+        <div class="card-item" onclick="openPrivacyPage()">개인정보 처리 방침</div>
+        <div class="card-item" onclick="openVersionInfo()">버전 정보</div>
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ② 비밀번호 확인 -->
+<!-- ========================================================= -->
+<section class="page" id="passwordCheckPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="showMain()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>비밀번호 확인</span>
+    </header>
+
+    <div class="content-box">
+        <label>비밀번호</label>
+        <input type="password" id="pwInput" class="input">
+        <span id="pwErrorBox" class="error-msg"></span>
+    </div>
+
+    <button class="next-btn" onclick="goLoginMethod()">다음</button>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ③ 로그인 방식 변경 -->
+<!-- ========================================================= -->
+<section class="page" id="loginMethodPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="showPwCheck()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>로그인 방식 변경</span>
+    </header>
+
+    <div class="card login-card">
+        <div class="card-item" onclick="openPwChangePage()">비밀번호 로그인</div>
+    </div>
+
+    <div class="card login-card">
+        <div class="card-item" onclick="openPatternSetPage()">패턴 로그인</div>
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ④ 비밀번호 변경 -->
+<!-- ========================================================= -->
+<section class="page" id="passwordChangePage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="goBackToMethodPage()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>변경할 비밀번호 설정</span>
+    </header>
+
+    <div class="content-box">
+        <label>새 비밀번호</label>
+        <input type="password" id="newPw" class="input">
+
+        <label>비밀번호 확인</label>
+        <input type="password" id="newPwCheck" class="input">
+
+        <span id="pwChangeError" class="error-msg"></span>
+    </div>
+
+    <button class="next-btn" onclick="changePassword()">변경 완료</button>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑤ 패턴 1차 입력 -->
+<!-- ========================================================= -->
+<section class="page" id="patternSetPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="goBackToMethodPage()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>패턴을 입력하세요</span>
+    </header>
+
+    <div class="pattern-card">
+        <canvas id="patternCanvas1" class="pattern-canvas"></canvas>
+        <div class="pattern-grid" id="patternGrid1"></div>
+        <span id="patternError1" class="error-msg"></span>
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑥ 패턴 2차 입력 -->
+<!-- ========================================================= -->
+<section class="page" id="patternConfirmPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="openPatternSetPage()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>패턴을 다시 입력하세요</span>
+    </header>
+
+    <div class="pattern-card">
+        <canvas id="patternCanvas2" class="pattern-canvas"></canvas>
+        <div class="pattern-grid" id="patternGrid2"></div>
+        <span id="patternError2" class="error-msg"></span>
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑦ 회원탈퇴 -->
+<!-- ========================================================= -->
+<section class="page" id="withdrawPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="showMain()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>회원탈퇴</span>
+    </header>
+
+    <!-- 약관 박스 -->
+    <div class="withdraw-card">
+        <h3 class="section-title">회원탈퇴 약관</h3>
+
+        <p class="withdraw-text">
+            회원 탈퇴 시 서비스 이용이 즉시 중단되며 저장된 정보는 복구할 수 없습니다.<br><br>
+            일부 정보는 법령에 따라 일정 기간 보관될 수 있습니다.<br><br>
+            탈퇴 후 재가입은 가능하지만 기존 데이터는 복구되지 않습니다.
+        </p>
+
+        <label class="agree-row">
+            <input type="checkbox" id="withdrawAgree"> 약관을 모두 읽고 동의하였습니다.
+        </label>
+
+        <span id="withdrawError" class="error-msg"></span>
+    </div>
+
+    <!-- 이유 선택 박스 -->
+    <div class="withdraw-card">
+        <h3 class="section-title">탈퇴 이유 선택</h3>
+
+        <label class="survey-item"><input type="radio" name="reason" value="서비스 불편"> 서비스 이용이 불편하거나 기능 부족</label>
+        <label class="survey-item"><input type="radio" name="reason" value="사용 빈도 낮음"> 최근 사용 빈도 낮음</label>
+        <label class="survey-item"><input type="radio" name="reason" value="보안 우려"> 개인정보 보안 우려</label>
+        <label class="survey-item"><input type="radio" name="reason" value="다른 서비스 이용"> 다른 서비스로 이동</label>
+        <label class="survey-item"><input type="radio" name="reason" value="버그"> 앱 오류 또는 버그</label>
+        <label class="survey-item"><input type="radio" name="reason" id="etcRadio" value="기타"> 기타 (직접 입력)</label>
+
+        <textarea id="etcInput" class="etc-box" placeholder="기타 이유를 입력하세요"></textarea>
+
+        <span id="reasonError" class="error-msg"></span>
+        <button class="next-btn" onclick="tryWithdraw()">회원탈퇴</button>
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑧ 문의하기 메인 -->
+<!-- ========================================================= -->
+<section class="page" id="supportMainPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="showMain()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>문의하기</span>
+    </header>
+
+    <div class="card">
+        <div class="card-item" onclick="openInquiryWritePage()">문의 글 작성하기</div>
+    </div>
+
+    <div class="card">
+        <div class="card-item" onclick="openInquiryListPage()">나의 문의 내역</div>
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑨ 문의 글 작성 -->
+<!-- ========================================================= -->
+<section class="page" id="inquiryWritePage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="openSupportMainPage()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>문의 글 작성하기</span>
+    </header>
+
+    <div class="content-box">
+        <label>제목</label>
+        <input type="text" id="inqTitle" class="input">
+
+        <label>카테고리</label>
+        <select id="inqCategory" class="input" onchange="onCategoryChange()">
+            <option value="">선택하기</option>
+            <option value="서비스 이용">서비스 이용</option>
+            <option value="로그인/계정">로그인/계정</option>
+            <option value="오류 신고">오류 신고</option>
+            <option value="기능 요청">기능 요청</option>
+            <option value="기타">기타</option>
+        </select>
+
+        <input type="text" id="customCategory" class="input etc-input" placeholder="카테고리를 입력하세요">
+
+        <label>문의 내용</label>
+        <textarea id="inqContent" class="input" style="height:150px;"></textarea>
+    </div>
+
+    <button class="next-btn" onclick="submitInquiry()">문의하기</button>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑩ 문의 내역 -->
+<!-- ========================================================= -->
+<section class="page" id="inquiryListPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="openSupportMainPage()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>나의 문의 내역</span>
+    </header>
+
+    <div id="inquiryListContainer" class="content-box"></div>
+
+    <div class="empty-box" id="noInquiryBox" style="display:none;">
+        문의 내역이 없습니다.
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑪ 이용약관 -->
+<!-- ========================================================= -->
+<section class="page" id="termsPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="showMain()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>서비스 이용약관</span>
+    </header>
+
+    <div class="accordion-container">
+        <div class="accordion-item" onclick="toggleAccordion(this)">
+            <h4>제1조 목적</h4>
+            <div class="accordion-content">본 약관은 서비스 이용에 관한 기본적인 기준을 설명합니다.</div>
+        </div>
+
+        <div class="accordion-item" onclick="toggleAccordion(this)">
+            <h4>제2조 정의</h4>
+            <div class="accordion-content">서비스에서 사용되는 용어는 다음과 같습니다.</div>
+        </div>
+
+        <div class="accordion-item" onclick="toggleAccordion(this)">
+            <h4>제3조 서비스 제공</h4>
+            <div class="accordion-content">회사는 안정적인 서비스 제공을 위해 노력합니다.</div>
+        </div>
+
+        <button class="next-btn" onclick="closeAllAccordions()">접기</button>
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑫ 개인정보 처리 방침 -->
+<!-- ========================================================= -->
+<section class="page" id="privacyPage">
+    <header class="sub-header">
+        <button class="back-btn" onclick="showMain()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <span>개인정보 처리방침</span>
+    </header>
+
+    <div class="accordion-container">
+        <div class="accordion-item" onclick="toggleAccordion(this)">
+            <h4>1. 수집하는 개인정보</h4>
+            <div class="accordion-content">서비스 제공을 위하여 개인정보를 수집합니다.</div>
+        </div>
+
+        <div class="accordion-item" onclick="toggleAccordion(this)">
+            <h4>2. 이용목적</h4>
+            <div class="accordion-content">수집된 정보는 정해진 목적 내에서만 사용됩니다.</div>
+        </div>
+
+        <div class="accordion-item" onclick="toggleAccordion(this)">
+            <h4>3. 보관 기간</h4>
+            <div class="accordion-content">관련 법령에 따라 일정 기간 보관됩니다.</div>
+        </div>
+
+        <button class="next-btn" onclick="closeAllAccordions()">접기</button>
+    </div>
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ⑬ 팝업 -->
+<!-- ========================================================= -->
+<div id="popupModal" class="modal hidden">
+    <div class="modal-content">
+        <!-- 🔥 확인 버튼은 JS에서만 생성 → 여기에는 메시지 영역만 둠 -->
+        <p id="popupMsg"></p>
+    </div>
+</div>
+
+<script src="settings.js"></script>
+</body>
+</html>
