@@ -14,6 +14,7 @@ const signupData = {
 let currentStep = 1;
 const totalSteps = 3;
 let nicknameChecked = false;
+let emailVerified = false;
 
 // DOM 요소
 const backBtn = document.getElementById('backBtn');
@@ -26,6 +27,10 @@ const profileImageInput = document.getElementById('profileImage');
 const profilePreview = document.getElementById('profilePreview');
 const profilePlaceholder = document.getElementById('profilePlaceholder');
 const checkNicknameBtn = document.getElementById('checkNicknameBtn');
+const sendVerificationBtn = document.getElementById('sendVerificationBtn');
+const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+const verificationSection = document.getElementById('verificationSection');
+const verificationCodeInput = document.getElementById('verificationCode');
 
 // 단계 표시 함수
 function showStep(step) {
@@ -82,13 +87,16 @@ function validateStep1() {
   
   let isValid = true;
   
-  // 이메일 검증
-  const emailPattern = /^[^\s@]+@edu\.hanbat\.ac\.kr$/;
+  // 이메일 검증 (일반 이메일 형식)
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email) {
-    showError('emailError', '학교메일을 입력해주세요.');
+    showError('emailError', '이메일을 입력해주세요.');
     isValid = false;
   } else if (!emailPattern.test(email)) {
-    showError('emailError', '학교메일 형식이 올바르지 않습니다.');
+    showError('emailError', '이메일 형식이 올바르지 않습니다.');
+    isValid = false;
+  } else if (!emailVerified) {
+    showError('emailError', '이메일 인증을 완료해주세요.');
     isValid = false;
   } else {
     clearError('emailError');
@@ -217,6 +225,101 @@ profilePreview.addEventListener('click', () => {
   profileImageInput.click();
 });
 
+// 이메일 인증번호 발송
+async function sendVerificationCode() {
+  const email = document.getElementById('email').value.trim();
+  
+  if (!email) {
+    showError('emailError', '이메일을 입력해주세요.');
+    return;
+  }
+  
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    showError('emailError', '이메일 형식이 올바르지 않습니다.');
+    return;
+  }
+  
+  sendVerificationBtn.disabled = true;
+  sendVerificationBtn.textContent = '발송 중...';
+  clearError('emailError');
+  
+  try {
+    // 🔥 send-code API로 변경
+    const response = await fetch('https://chajabat.onrender.com/api/v1/auth/send-code', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+    
+    const data = await response.json().catch(() => ({}));
+    
+    if (!response.ok) {
+      showError('emailError', data.error || data.message || '인증번호 발송에 실패했습니다.');
+      return;
+    }
+    
+    alert('인증번호가 발송되었습니다.');
+    verificationSection.style.display = 'block';
+    // 🔥 서버에 보낼 이메일 저장
+    signupData.email = email;
+  } catch (error) {
+    console.error(error);
+    showError('emailError', '서버에 연결할 수 없습니다.');
+  } finally {
+    sendVerificationBtn.disabled = false;
+    sendVerificationBtn.textContent = '인증번호 발송';
+  }
+}
+
+// 이메일 인증번호 확인
+async function verifyCode() {
+  const email = signupData.email;
+  const code = verificationCodeInput.value.trim();
+  
+  if (!code) {
+    showError('verificationError', '인증번호를 입력해주세요.');
+    return;
+  }
+  
+  verifyCodeBtn.disabled = true;
+  verifyCodeBtn.textContent = '확인 중...';
+  clearError('verificationError');
+  
+  try {
+    const response = await fetch('https://chajabat.onrender.com/api/v1/auth/verify-code', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, code })
+    });
+    
+    const data = await response.json().catch(() => ({}));
+    
+    if (!response.ok) {
+      showError('verificationError', '인증번호가 일치하지 않습니다.');
+      return;
+    }
+    
+    emailVerified = true;
+    document.getElementById('verificationStatus').textContent = '✓ 이메일 인증 완료';
+    document.getElementById('verificationStatus').style.color = '#4caf50';
+    verificationCodeInput.disabled = true;
+    verifyCodeBtn.disabled = true;
+    verifyCodeBtn.textContent = '인증 완료';
+  } catch (error) {
+    showError('verificationError', '서버 오류가 발생했습니다.');
+  } finally {
+    if (!emailVerified) {
+      verifyCodeBtn.disabled = false;
+      verifyCodeBtn.textContent = '인증 확인';
+    }
+  }
+}
+
 // 닉네임 중복 확인
 async function checkNickname() {
   const nickname = document.getElementById('nickname').value.trim();
@@ -226,44 +329,22 @@ async function checkNickname() {
     return;
   }
   
-  if (nickname.length < 2 || nickname.length > 10) {
-    alert('닉네임은 2~10자로 입력해주세요.');
-    return;
-  }
-  
   checkNicknameBtn.disabled = true;
   checkNicknameBtn.textContent = '확인 중...';
   
   try {
-    // 백엔드 API 호출
-    const response = await fetch(`/api/v1/auth/check-nickname?nickname=${encodeURIComponent(nickname)}`, {
-      method: 'GET'
-    });
-    
+    const response = await fetch(`https://chajabat.onrender.com/api/v1/auth/check-nickname?nickname=${encodeURIComponent(nickname)}`);
     const data = await response.json();
     
     if (data.available) {
       alert('사용 가능한 닉네임입니다.');
       nicknameChecked = true;
       signupData.nickname = nickname;
-      document.getElementById('nickname').classList.remove('error');
-      clearError('nicknameError');
       updateCompleteButton();
     } else {
-      alert('이미 사용 중인 닉네임입니다.');
       nicknameChecked = false;
-      document.getElementById('nickname').classList.add('error');
-      showError('nicknameError', '이미 사용 중인 닉네임입니다.');
+      alert('이미 사용 중인 닉네임입니다.');
     }
-  } catch (error) {
-    console.error('닉네임 확인 오류:', error);
-    // 임시 처리: 서버 없을 때 자동 통과
-    alert('사용 가능한 닉네임입니다.');
-    nicknameChecked = true;
-    signupData.nickname = nickname;
-    document.getElementById('nickname').classList.remove('error');
-    clearError('nicknameError');
-    updateCompleteButton();
   } finally {
     checkNicknameBtn.disabled = false;
     checkNicknameBtn.textContent = '중복 확인';
@@ -301,6 +382,31 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCompleteButton();
   });
   
+  // 이메일 인증번호 발송 버튼
+  sendVerificationBtn.addEventListener('click', sendVerificationCode);
+  
+  // 이메일 인증번호 확인 버튼
+  verifyCodeBtn.addEventListener('click', verifyCode);
+  
+  // 이메일 입력 시 인증 상태 초기화
+  document.getElementById('email').addEventListener('input', function() {
+    emailVerified = false;
+    verificationSection.style.display = 'none';
+    verificationCodeInput.value = '';
+    verificationCodeInput.disabled = false;
+    verifyCodeBtn.disabled = false;
+    verifyCodeBtn.textContent = '인증 확인';
+    document.getElementById('verificationStatus').textContent = '';
+    clearError('verificationError');
+  });
+  
+  // 인증번호 입력 시 Enter 키로 확인
+  verificationCodeInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      verifyCode();
+    }
+  });
+  
   // 닉네임 중복 확인 버튼
   checkNicknameBtn.addEventListener('click', checkNickname);
   
@@ -318,47 +424,44 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
+    if (!emailVerified) {
+      alert('이메일 인증을 완료해주세요.');
+      return;
+    }
+    
     completeBtn.disabled = true;
     completeBtn.textContent = '가입 중...';
     
     try {
-      // FormData 생성
-      const formData = new FormData();
-      formData.append('email', signupData.email);
-      formData.append('password', signupData.password);
-      formData.append('nickname', signupData.nickname);
-      if (signupData.profileImage) {
-        formData.append('profileImage', signupData.profileImage);
-      }
-      
-      // 백엔드 API 호출
-      const response = await fetch('/api/v1/auth/signup', {
+      // 🔥 FormData 제거 → JSON으로 변경
+      const response = await fetch('https://chajabat.onrender.com/api/v1/auth/signup', {
         method: 'POST',
-        body: formData
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: signupData.email,
+          password: signupData.password,
+          nickname: signupData.nickname
+        })
       });
       
       const data = await response.json();
       
-      if (response.ok) {
-        // localStorage에 닉네임 저장
-        if (signupData.nickname) {
-          localStorage.setItem("nickname", signupData.nickname);
-        }
-        alert('회원가입이 완료되었습니다!');
-        window.location.href = '../login/login.html';
-      } else {
-        alert(data.error || '회원가입에 실패했습니다.');
+      if (!response.ok) {
+        alert(data.error || data.message || '회원가입 실패');
         completeBtn.disabled = false;
         completeBtn.textContent = '가입 완료';
+        return;
       }
+      
+      alert('회원가입 성공!');
+      window.location.href = '../login/login.html';
     } catch (error) {
       console.error('회원가입 오류:', error);
-      // 임시 처리: 서버 없을 때 - localStorage에 닉네임 저장
-      if (signupData.nickname) {
-        localStorage.setItem("nickname", signupData.nickname);
-      }
-      alert('회원가입이 완료되었습니다! (임시)');
-      window.location.href = '../login/login.html';
+      alert('서버 오류로 회원가입 실패');
+      completeBtn.disabled = false;
+      completeBtn.textContent = '가입 완료';
     }
   });
   

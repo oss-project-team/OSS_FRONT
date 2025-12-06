@@ -19,55 +19,99 @@ document.querySelectorAll(".menu-header").forEach(header => {
 
 
 /* ================================
-   🔥 내 게시글 목록 로드 (Found + Lost 모두)
+   🔥 내 게시글 목록 로드 (API 연동)
 ================================ */
-function loadMyPosts() {
+async function loadMyPosts() {
     const list = document.getElementById("myPostList");
     if (!list) return;
 
-    list.innerHTML = "";
+    list.innerHTML = "<li style='color:#777;'>로딩 중...</li>";
 
-    // 현재 사용자 닉네임 가져오기
-    const currentNickname = localStorage.getItem("nickname") || "";
-    if (!currentNickname || currentNickname.trim() === "") {
-        list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
-        return;
-    }
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
+        }
 
-    const lostPosts = JSON.parse(localStorage.getItem("lostPosts")) || [];
-    const foundPosts = JSON.parse(localStorage.getItem("foundPosts")) || [];
-
-    // 현재 사용자가 작성한 게시물만 필터링
-    const myLostPosts = lostPosts
-        .filter(p => p.author && p.author.trim() === currentNickname.trim())
-        .map(p => ({...p, type:"lost"}));
-    
-    const myFoundPosts = foundPosts
-        .filter(p => p.author && p.author.trim() === currentNickname.trim())
-        .map(p => ({...p, type:"found"}));
-
-    const allPosts = [...myLostPosts, ...myFoundPosts];
-
-    if (allPosts.length === 0) {
-        list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
-        return;
-    }
-
-    allPosts.sort((a,b) => (b.id||0) - (a.id||0));
-
-    allPosts.forEach(post => {
-        const li = document.createElement("li");
-        li.textContent = post.title + (post.type==="found" ? " (찾음)" : " (분실)");
-
-        li.addEventListener("click", () => {
-            if(post.type === "lost")
-                window.location.href = `../detail_lost/detail_lost.html?id=${post.id}`;
-            else
-                window.location.href = `../detail/detail.html?id=${post.id}`;
+        const response = await fetch('https://chajabat.onrender.com/api/v1/posts/my', {
+            method: 'GET',
+            headers: headers
         });
 
-        list.appendChild(li);
-    });
+        if (response.ok) {
+            const data = await response.json();
+            const posts = data.posts || data || [];
+
+            list.innerHTML = "";
+
+            if (posts.length === 0) {
+                list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
+                return;
+            }
+
+            posts.forEach(post => {
+                const li = document.createElement("li");
+                const postType = post.type || post.postType || "found";
+                li.textContent = post.title + (postType === "found" ? " (찾음)" : " (분실)");
+
+                li.addEventListener("click", () => {
+                    if(postType === "lost")
+                        window.location.href = `../detail_lost/detail_lost.html?id=${post.id}`;
+                    else
+                        window.location.href = `../detail/detail.html?id=${post.id}`;
+                });
+
+                list.appendChild(li);
+            });
+        } else {
+            // API 실패 시 localStorage에서 로드 (fallback)
+            const currentNickname = localStorage.getItem("nickname") || "";
+            if (!currentNickname || currentNickname.trim() === "") {
+                list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
+                return;
+            }
+
+            const lostPosts = JSON.parse(localStorage.getItem("lostPosts")) || [];
+            const foundPosts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+
+            const myLostPosts = lostPosts
+                .filter(p => p.author && p.author.trim() === currentNickname.trim())
+                .map(p => ({...p, type:"lost"}));
+            
+            const myFoundPosts = foundPosts
+                .filter(p => p.author && p.author.trim() === currentNickname.trim())
+                .map(p => ({...p, type:"found"}));
+
+            const allPosts = [...myLostPosts, ...myFoundPosts];
+
+            if (allPosts.length === 0) {
+                list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
+                return;
+            }
+
+            allPosts.sort((a,b) => (b.id||0) - (a.id||0));
+
+            allPosts.forEach(post => {
+                const li = document.createElement("li");
+                li.textContent = post.title + (post.type==="found" ? " (찾음)" : " (분실)");
+
+                li.addEventListener("click", () => {
+                    if(post.type === "lost")
+                        window.location.href = `../detail_lost/detail_lost.html?id=${post.id}`;
+                    else
+                        window.location.href = `../detail/detail.html?id=${post.id}`;
+                });
+
+                list.appendChild(li);
+            });
+        }
+    } catch (error) {
+        console.error("게시글 로드 오류:", error);
+        list.innerHTML = `<li style="color:#777;">게시글을 불러오는 중 오류가 발생했습니다.</li>`;
+    }
 }
 
 
@@ -110,7 +154,7 @@ async function checkNickname() {
     
     try {
         // 백엔드 API 호출
-        const response = await fetch(`/api/v1/auth/check-nickname?nickname=${encodeURIComponent(nickname)}`, {
+        const response = await fetch(`https://chajabat.onrender.com/api/v1/auth/check-nickname?nickname=${encodeURIComponent(nickname)}`, {
             method: 'GET'
         });
         
@@ -143,58 +187,157 @@ async function checkNickname() {
 }
 
 /* ================================
-   🔥 프로필 저장 + localStorage 유지
+   🔥 프로필 저장 + API 연동
 ================================ */
-function saveProfile() {
+async function saveProfile() {
     const nicknameInput = document.getElementById("nickInput").value.trim();
     const nickname = document.getElementById("nickname");
     const upload = document.getElementById("profileUpload");
     let profileImage = document.getElementById("profileImage");
     const currentNickname = localStorage.getItem("nickname") || "";
+    const saveBtn = document.getElementById("saveProfileBtn");
 
-    if(nicknameInput){
-        // 현재 닉네임과 동일한 경우 중복 확인 없이 저장
-        if (nicknameInput === currentNickname) {
-            // 닉네임 변경 없이 프로필 이미지만 저장 가능
-        } else {
+    // 저장 버튼 비활성화
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "저장 중...";
+    }
+
+    try {
+        const requestData = {};
+        let hasChanges = false;
+
+        // 닉네임 변경 처리
+        if(nicknameInput && nicknameInput !== currentNickname){
             // 닉네임이 변경된 경우 중복 확인 필수
             if (!nicknameChecked) {
                 alert("닉네임 중복 확인을 해주세요.");
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = "저장";
+                }
                 return;
             }
+            requestData.nickname = nicknameInput;
+            hasChanges = true;
         }
-        
-        // 기존 닉네임 가져오기
-        const oldNickname = currentNickname;
-        
-        console.log("닉네임 변경:", oldNickname, "->", nicknameInput);
-        
-        // 새 닉네임으로 업데이트
-        nickname.textContent = nicknameInput;
-        localStorage.setItem("nickname", nicknameInput);
-        
-        // 기존 게시물의 작성자 닉네임도 업데이트
-        if(oldNickname && oldNickname.trim() !== "" && oldNickname !== nicknameInput) {
-            const updatedCount = updatePostsAuthor(oldNickname.trim(), nicknameInput);
-            console.log("업데이트된 게시물 수:", updatedCount);
-        }
-        
-        // 중복 확인 상태 초기화
-        nicknameChecked = false;
-        document.getElementById("nicknameError").textContent = "";
-        document.getElementById("nickInput").value = "";
-    }
 
-    if(upload.files && upload.files[0]){
-        const reader = new FileReader();
-        reader.onload = e =>{
-            profileImage.src = e.target.result;
-            localStorage.setItem("profileImage", e.target.result);
-        }
-        reader.readAsDataURL(upload.files[0]);
-    }
+        // 프로필 이미지 변경 처리 (이미지 파일은 base64로 변환하여 전송)
+        if(upload.files && upload.files[0]){
+            // 파일을 base64로 변환
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const imageRequestData = { ...requestData };
+                imageRequestData.profileImage = e.target.result;
 
-    showPopup("프로필이 저장되었습니다.");
+                // API 호출
+                const accessToken = localStorage.getItem('access_token');
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (accessToken) {
+                    headers['Authorization'] = `Bearer ${accessToken}`;
+                }
+
+                const response = await fetch('https://chajabat.onrender.com/api/v1/users/profile', {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(imageRequestData)
+                });
+                
+                await handleProfileResponse(response, nicknameInput, currentNickname, nickname, profileImage, upload, saveBtn);
+            };
+            reader.readAsDataURL(upload.files[0]);
+            return; // 파일 읽기가 완료되면 handleProfileResponse에서 처리
+        }
+
+        if (!hasChanges) {
+            showPopup("변경할 내용이 없습니다.");
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = "저장";
+            }
+            return;
+        }
+
+        // 닉네임만 변경하는 경우
+        const accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+
+        const response = await fetch('https://chajabat.onrender.com/api/v1/users/profile', {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify(requestData)
+        });
+        
+        await handleProfileResponse(response, nicknameInput, currentNickname, nickname, profileImage, upload, saveBtn);
+    } catch (error) {
+        console.error("프로필 저장 오류:", error);
+        alert("프로필 저장 중 오류가 발생했습니다.");
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "저장";
+        }
+    }
+}
+
+// 프로필 응답 처리 함수
+async function handleProfileResponse(response, nicknameInput, currentNickname, nickname, profileImage, upload, saveBtn) {
+    try {
+        if (response.ok) {
+            const data = await response.json();
+            
+            // 닉네임 업데이트
+            if (nicknameInput && nicknameInput !== currentNickname) {
+                const oldNickname = currentNickname;
+                nickname.textContent = nicknameInput;
+                localStorage.setItem("nickname", nicknameInput);
+                
+                // 기존 게시물의 작성자 닉네임도 업데이트
+                if(oldNickname && oldNickname.trim() !== "" && oldNickname !== nicknameInput) {
+                    const updatedCount = updatePostsAuthor(oldNickname.trim(), nicknameInput);
+                    console.log("업데이트된 게시물 수:", updatedCount);
+                }
+                
+                // 중복 확인 상태 초기화
+                nicknameChecked = false;
+                document.getElementById("nicknameError").textContent = "";
+                document.getElementById("nickInput").value = "";
+            }
+
+            // 프로필 이미지 업데이트
+            if (upload.files && upload.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    profileImage.src = e.target.result;
+                    localStorage.setItem("profileImage", e.target.result);
+                };
+                reader.readAsDataURL(upload.files[0]);
+            } else if (data.profileImage) {
+                // 서버에서 반환한 프로필 이미지 URL 사용
+                profileImage.src = data.profileImage;
+                localStorage.setItem("profileImage", data.profileImage);
+            }
+
+            showPopup("프로필이 저장되었습니다.");
+        } else {
+            const errorData = await response.json();
+            alert(errorData.error || "프로필 저장에 실패했습니다.");
+        }
+    } catch (error) {
+        console.error("프로필 응답 처리 오류:", error);
+        alert("프로필 저장 중 오류가 발생했습니다.");
+    } finally {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "저장";
+        }
+    }
 }
 
 /* ================================
@@ -282,14 +425,52 @@ function closePopup(){
 
 
 /* ================================
-   🔥 프로필 자동 불러오기
+   🔥 프로필 자동 불러오기 (API 연동)
 ================================ */
-function loadProfile(){
-    const nickname = localStorage.getItem("nickname");
-    const image = localStorage.getItem("profileImage");
+async function loadProfile(){
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
+        }
 
-    if(nickname) document.getElementById("nickname").textContent = nickname;
-    if(image) document.getElementById("profileImage").src = image;
+        const response = await fetch('https://chajabat.onrender.com/api/v1/users/profile', {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data.nickname) {
+                document.getElementById("nickname").textContent = data.nickname;
+                localStorage.setItem("nickname", data.nickname);
+            }
+            
+            if (data.profileImage) {
+                document.getElementById("profileImage").src = data.profileImage;
+                localStorage.setItem("profileImage", data.profileImage);
+            }
+        } else {
+            // API 실패 시 localStorage에서 로드 (fallback)
+            const nickname = localStorage.getItem("nickname");
+            const image = localStorage.getItem("profileImage");
+
+            if(nickname) document.getElementById("nickname").textContent = nickname;
+            if(image) document.getElementById("profileImage").src = image;
+        }
+    } catch (error) {
+        console.error("프로필 로드 오류:", error);
+        // 오류 발생 시 localStorage에서 로드 (fallback)
+        const nickname = localStorage.getItem("nickname");
+        const image = localStorage.getItem("profileImage");
+
+        if(nickname) document.getElementById("nickname").textContent = nickname;
+        if(image) document.getElementById("profileImage").src = image;
+    }
 }
 
 
@@ -370,16 +551,50 @@ document.querySelectorAll(".nav-item").forEach(item=>{
 
 
 /* ================================
-   📌 개인정보 변경(저장하지 않고 입력 초기화)
+   📌 개인정보 변경 (API 연동)
 ================================ */
-function savePersonalInfo(){
+async function savePersonalInfo(){
     const emailInput = document.getElementById("emailInput");
     const phoneInput = document.getElementById("phoneInput");
+    const email = emailInput.value.trim();
+    const phone = phoneInput.value.trim();
 
-    showPopup("개인 정보가 변경되었습니다.");
+    if (!email && !phone) {
+        alert("변경할 정보를 입력해주세요.");
+        return;
+    }
 
-    emailInput.value = "";
-    phoneInput.value = "";
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+
+        const updateData = {};
+        if (email) updateData.email = email;
+        if (phone) updateData.phone = phone;
+
+        const response = await fetch('https://chajabat.onrender.com/api/v1/users/profile', {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify(updateData)
+        });
+
+        if (response.ok) {
+            showPopup("개인 정보가 변경되었습니다.");
+            emailInput.value = "";
+            phoneInput.value = "";
+        } else {
+            const errorData = await response.json();
+            alert(errorData.error || "개인 정보 변경에 실패했습니다.");
+        }
+    } catch (error) {
+        console.error("개인정보 변경 오류:", error);
+        alert("개인 정보 변경 중 오류가 발생했습니다.");
+    }
 }
 
 

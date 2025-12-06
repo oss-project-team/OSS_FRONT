@@ -27,51 +27,152 @@ pushHistory();
 
 
 // ===============================
-// 🔥 카드 렌더링
+// 🔥 카드 렌더링 (API 연동)
 // ===============================
-function renderCards() {
-
+async function renderCards() {
     const cardList = document.getElementById("cardList");
     if (!cardList) return;
 
-    // 최신 데이터 불러오기
-    foundPosts = JSON.parse(localStorage.getItem("foundPosts")) || [];
-    lostPosts = JSON.parse(localStorage.getItem("lostPosts")) || [];
+    cardList.innerHTML = "<div style='text-align:center; padding:20px;'>로딩 중...</div>";
 
-    cardList.innerHTML = "";
+    try {
+        // API에서 게시글 목록 가져오기
+        const params = new URLSearchParams({
+            type: boardType === "Found" ? "Found" : "Lost",
+            sort: 'latest'
+        });
+        
+        if (selectedCategory !== "전체") {
+            params.append('category', selectedCategory);
+        }
+        
+        if (showOnlyInProgress) {
+            params.append('status', 'Waiting');
+        }
 
-    let targetPosts = (boardType === "Found" ? foundPosts : lostPosts)
-        .filter(post => !showOnlyInProgress || !post.solved)
-        .filter(post => selectedCategory === "전체" || post.category === selectedCategory);
+        const response = await fetch(`https://chajabat.onrender.com/api/v1/posts?${params.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-    targetPosts.sort((a, b) => (b.id || 0) - (a.id || 0));
+        let targetPosts = [];
 
-    targetPosts.forEach(post => {
-        const card = document.createElement("div");
-        card.className = "card";
+        if (response.ok) {
+            const data = await response.json();
+            targetPosts = data.items || data || [];
+            
+            // API 데이터를 localStorage 형식으로 변환하여 저장 (fallback)
+            const convertedPosts = targetPosts.map(post => ({
+                id: post.id,
+                title: post.title,
+                description: post.content || post.description,
+                category: post.category,
+                place: post.location,
+                date: post.lost_date || post.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
+                img: post.images && post.images.length > 0 ? post.images[0] : null,
+                solved: post.status === 'Completed',
+                author: post.author_nickname || post.author || post.author_email || ''
+            }));
 
-        card.innerHTML = `
-            ${post.img ? `<img class="card-image" src="${post.img}">` : `<div class="card-placeholder">이미지 없음</div>`}
-            <div class="card-content">
-                <div class="card-title">${post.title}</div>
-                <div class="card-date">${post.date}</div>
-                <div class="card-place">${post.place}</div>
-            </div>
-        `;
+            if (boardType === "Found") {
+                localStorage.setItem("foundPosts", JSON.stringify(convertedPosts));
+            } else {
+                localStorage.setItem("lostPosts", JSON.stringify(convertedPosts));
+            }
+        } else {
+            // API 실패 시 localStorage에서 로드 (fallback)
+            foundPosts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+            lostPosts = JSON.parse(localStorage.getItem("lostPosts")) || [];
+            targetPosts = (boardType === "Found" ? foundPosts : lostPosts)
+                .filter(post => !showOnlyInProgress || !post.solved)
+                .filter(post => selectedCategory === "전체" || post.category === selectedCategory);
+        }
 
-        card.addEventListener("click", () => {
-    if(boardType === "Lost") {
-        // 🔥 Lost는 detail_lost로 이동
-        window.location.href = `../detail_lost/detail_lost.html?id=${post.id}`;
-    } else {
-        // 🔥 Found는 기존 detail로 이동
-        window.location.href = `../detail/detail.html?id=${post.id}`;
+        cardList.innerHTML = "";
+
+        if (targetPosts.length === 0) {
+            cardList.innerHTML = "<div style='text-align:center; padding:20px; color:#777;'>게시글이 없습니다.</div>";
+            return;
+        }
+
+        targetPosts.sort((a, b) => {
+            const aId = a.id || 0;
+            const bId = b.id || 0;
+            return bId - aId;
+        });
+
+        targetPosts.forEach(post => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const postDate = post.lost_date || post.date || post.created_at?.split('T')[0] || '';
+            const postPlace = post.location || post.place || '';
+            const postImage = (post.images && post.images.length > 0) ? post.images[0] : (post.img || null);
+
+            card.innerHTML = `
+                ${postImage ? `<img class="card-image" src="${postImage}">` : `<div class="card-placeholder">이미지 없음</div>`}
+                <div class="card-content">
+                    <div class="card-title">${post.title}</div>
+                    <div class="card-date">${postDate}</div>
+                    <div class="card-place">${postPlace}</div>
+                </div>
+            `;
+
+            card.addEventListener("click", () => {
+                if(boardType === "Lost") {
+                    window.location.href = `../detail_lost/detail_lost.html?id=${post.id}`;
+                } else {
+                    window.location.href = `../detail/detail.html?id=${post.id}`;
+                }
+            });
+
+            cardList.appendChild(card);
+        });
+    } catch (error) {
+        console.error('게시글 목록 로드 오류:', error);
+        // 에러 발생 시 localStorage에서 로드 (fallback)
+        foundPosts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+        lostPosts = JSON.parse(localStorage.getItem("lostPosts")) || [];
+        
+        let targetPosts = (boardType === "Found" ? foundPosts : lostPosts)
+            .filter(post => !showOnlyInProgress || !post.solved)
+            .filter(post => selectedCategory === "전체" || post.category === selectedCategory);
+
+        cardList.innerHTML = "";
+
+        if (targetPosts.length === 0) {
+            cardList.innerHTML = "<div style='text-align:center; padding:20px; color:#777;'>게시글이 없습니다.</div>";
+            return;
+        }
+
+        targetPosts.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+        targetPosts.forEach(post => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+                ${post.img ? `<img class="card-image" src="${post.img}">` : `<div class="card-placeholder">이미지 없음</div>`}
+                <div class="card-content">
+                    <div class="card-title">${post.title}</div>
+                    <div class="card-date">${post.date}</div>
+                    <div class="card-place">${post.place}</div>
+                </div>
+            `;
+
+            card.addEventListener("click", () => {
+                if(boardType === "Lost") {
+                    window.location.href = `../detail_lost/detail_lost.html?id=${post.id}`;
+                } else {
+                    window.location.href = `../detail/detail.html?id=${post.id}`;
+                }
+            });
+
+            cardList.appendChild(card);
+        });
     }
-});
-
-
-        cardList.appendChild(card);
-    });
 }
 
 

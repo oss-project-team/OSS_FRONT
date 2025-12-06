@@ -12,7 +12,7 @@ body {
     min-height: 100vh;
 }
 
-/* 헤더 */
+/*  헤더 */
 .detail-header {
     padding: 16px;
 }
@@ -20,17 +20,17 @@ body {
 .detail-header button {
     background: none;
     border: none;
-    padding: 0;
+    cursor: pointer;
 }
 
 .detail-header i {
     font-size: 28px;
 }
 
-/* 대표 이미지 */
+/*  큰 이미지 */
 .detail-image-box {
     width: 100%;
-    background: #ddd;
+    height: auto;
 }
 
 .detail-image-box img {
@@ -39,8 +39,7 @@ body {
     object-fit: cover;
 }
 
-
-/* 사용자 정보 */
+/*  작성자 정보 */
 .detail-user-section {
     display: flex;
     justify-content: space-between;
@@ -52,7 +51,7 @@ body {
 .user-info {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .user-profile {
@@ -63,7 +62,6 @@ body {
 }
 
 .user-name {
-    font-size: 16px;
     font-weight: 600;
 }
 
@@ -74,40 +72,13 @@ body {
 }
 
 .status-dot {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     background: #ff9800;
     border-radius: 50%;
 }
 
-.status-toggle-btn {
-    background:none;
-    border:none;
-    padding:4px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#666;
-    transition:color 0.2s;
-    margin-left:4px;
-    border-radius:50%;
-    width:28px;
-    height:28px;
-}
-
-.status-toggle-btn:hover {
-    color:#009ab7;
-    background:#f0f0f0;
-}
-
-.status-toggle-btn .material-icons {
-    font-size:20px;
-    transition:transform 0.3s;
-}
-
-
-/* 내용 카드 */
+/* 내용 박스 */
 .detail-card {
     margin: 16px;
     background: #fff;
@@ -134,7 +105,7 @@ body {
     line-height: 1.6;
 }
 
-/* 정보box */
+/* 정보 박스 */
 .detail-info-box {
     margin-top: 20px;
 }
@@ -153,68 +124,122 @@ body {
     font-weight: 600;
 }
 
-/* 버튼 */
-.btn-wrap {
+/* =========================================================
+    소유자 전용 버튼 스타일 (수정/삭제)
+========================================================= */
+.btn-owner-wrap {
     margin: 20px;
+    display: flex;
+    /* JS에서 display:none을 flex로 변경 */
+    gap: 10px;
 }
 
-.btn-msg {
-    width: 100%;
+.btn-owner-edit,
+.btn-owner-delete {
+    flex: 1;
+    /* 동일한 너비로 배분 */
     padding: 16px;
     border: none;
     border-radius: 30px;
-    background: #009ab7;
-    color: #fff;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    transition: background 0.2s;
 }
 
-/* 작성자용 버튼 영역 */
-.author-btns {
-    display:flex;
-    flex-direction:column;
-    gap:12px;
+.btn-owner-edit {
+    background: #f0f0f0;
+    /* 연한 배경 */
+    color: #333;
 }
 
-.btn-group {
-    display:flex;
-    gap:12px;
+.btn-owner-edit:hover {
+    background: #e0e0e0;
 }
 
-.btn-edit {
-    flex:1;
-    padding:16px;
-    border:none;
-    border-radius:30px;
-    background:#009ab7;
-    color:#fff;
-    font-size:16px;
-    font-weight:600;
-    cursor:pointer;
-    transition:background 0.2s;
+.btn-owner-delete {
+    background: #009ab7;
+    /* 메인 색상 */
+    color: #fff;
 }
 
-.btn-edit:hover {
-    background:#0088a3;
+.btn-owner-delete:hover {
+    background: #0088a3;
 }
 
-.btn-delete {
-    flex:1;
-    padding:16px;
-    border:none;
-    border-radius:30px;
-    background:#f44336;
-    color:#fff;
-    font-size:16px;
-    font-weight:600;
-    cursor:pointer;
-    transition:background 0.2s;
+/* =========================================================
+    모달 스타일
+========================================================= */
+.modal-overlay {
+    /* display: none; */
+    /* JS에서 처리 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none;
+    /* 기본적으로 숨김 */
 }
 
-.btn-delete:hover {
-    background:#da190b;
+.modal-overlay.show {
+    display: flex;
+    /* show 클래스가 붙으면 표시 */
 }
 
+.modal-content {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+}
 
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
+}
 
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cancel-btn {
+    background: #ddd;
+    color: #333;
+}
+
+.confirm-btn {
+    background: #e74c3c;
+    /* 삭제는 빨간색 */
+    color: #fff;
+}
+
+.confirm-btn:hover {
+    background: #c0392b;
+}
+
+/*  이미지 클릭 막기 해제 (수정/삭제 버튼이 추가되면서 불필요해짐) */
+.detail-image-box,
+.detail-image-box img {
+    pointer-events: auto;
+}

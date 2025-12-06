@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>분실했어요 - 상세페이지</title>
-
     <link rel="stylesheet" href="detail_lost.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-
 <body>
-
     <div class="page-wrapper">
-
-        <!-- 🔙 상단 뒤로가기 -->
         <header class="detail-header">
             <button id="backBtn"><i class="material-icons">arrow_back</i></button>
         </header>
 
-        <!-- 🔥 큰 이미지 -->
         <div class="detail-image-box">
             <img id="detailImage" src="">
         </div>
 
-        <!-- 🔥 작성자 정보 -->
         <div class="detail-user-section">
             <div class="user-info">
                 <div class="user-profile"></div>
@@ -35,16 +27,11 @@
             <div class="user-status">
                 <span class="status-dot"></span>
                 <span class="status-text">해결 중</span>
-                <button id="statusToggleBtn" class="status-toggle-btn" style="display: none;" title="상태 전환">
-                    <i class="material-icons">sync</i>
-                </button>
             </div>
         </div>
 
-        <!-- 🔥 내용 카드 -->
         <div class="detail-card">
-
-            <div class="detail-category" id="detailCategory">카테고리</div>   <!-- JS가 읽는 값 -->
+            <div class="detail-category" id="detailCategory">카테고리</div>
             <div class="detail-title" id="detailTitle">제목 불러오는 중...</div>
             <div class="detail-desc" id="detailDesc">내용 로딩중...</div>
 
@@ -61,24 +48,23 @@
             </div>
         </div>
 
-        <!-- 🔥 버튼 영역 (작성자/일반 사용자 구분) -->
-        <div class="btn-wrap" id="btnWrap">
-            <!-- 일반 사용자용: 쪽지 보내기 -->
-            <button id="msgBtn" class="btn-msg" style="display: none;">쪽지 보내기</button>
-            
-            <!-- 작성자용: 수정/삭제 -->
-            <div id="authorBtns" class="author-btns" style="display: none;">
-                <div class="btn-group">
-                    <button id="editBtn" class="btn-edit">수정하기</button>
-                    <button id="deleteBtn" class="btn-delete">삭제하기</button>
-                </div>
-            </div>
+        <div class="btn-owner-wrap" id="ownerBtns" style="display:none;">
+            <button id="editBtn" class="btn-owner-edit">수정하기</button>
+            <button id="deleteBtn" class="btn-owner-delete">삭제하기</button>
         </div>
-
     </div>
 
-    <!-- 🔥 반드시 body 끝에서 실행 -->
-    <script src="detail_lost.js"></script>
+    <!-- 🔥 삭제 모달 -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal-content">
+            <h3 class="modal-title">정말로 이 게시물을 삭제하시겠습니까?</h3>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel-btn" id="deleteCancelBtn">취소</button>
+                <button class="modal-btn confirm-btn" id="deleteConfirmBtn">삭제</button>
+            </div>
+        </div>
+    </div>
 
+    <script src="detail_lost.js"></script>
 </body>
 </html>

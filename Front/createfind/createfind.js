@@ -101,47 +101,106 @@ function showConfirmModal() {
 }
 
 /* =========================================================================
-   게시물 저장 (신규/수정)
+   게시물 저장 (신규/수정) - API 연동
 =========================================================================== */
-function savePost() {
-    let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
-
-    if (editId) {
-        posts = posts.map(p =>
-            p.id == editId
-                ? {
-                    ...p,
-                    title: postData.title,
-                    description: postData.description,
-                    category: postData.category,
-                    place: postData.location,
-                    date: postData.foundDate,
-                    img: postData.images[0] || null
-                }
-                : p
-        );
-    } else {
-        // 회원가입 시 저장된 닉네임 사용
-        let nickname = localStorage.getItem("nickname");
-        // nickname이 없으면 기본값 설정 및 저장
-        if (!nickname || nickname.trim() === "") {
-            nickname = "사용자" + Date.now().toString().slice(-6);
-            localStorage.setItem("nickname", nickname);
-        }
-        posts.push({
-            id: postData.id,
-            title: postData.title,
-            description: postData.description,
-            category: postData.category,
-            place: postData.location,
-            date: postData.foundDate,
-            img: postData.images[0] || null,
-            solved: false,
-            author: nickname.trim()
-        });
+async function savePost() {
+    const accessToken = localStorage.getItem('access_token');
+    
+    if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        window.location.href = '../login/login.html';
+        return;
     }
 
-    localStorage.setItem("foundPosts", JSON.stringify(posts));
+    try {
+        // 수정 모드인 경우
+        if (editId) {
+            const response = await fetch(`https://chajabat.onrender.com/api/v1/posts/${editId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    title: postData.title,
+                    content: postData.description,
+                    category: postData.category,
+                    location: postData.location,
+                    lost_date: postData.foundDate,
+                    images: postData.images
+                })
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                alert(data.error || '게시글 수정에 실패했습니다.');
+                return;
+            }
+            
+            // 성공 시 localStorage에도 업데이트 (fallback)
+            let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+            posts = posts.map(p =>
+                p.id == editId
+                    ? {
+                        ...p,
+                        title: postData.title,
+                        description: postData.description,
+                        category: postData.category,
+                        place: postData.location,
+                        date: postData.foundDate,
+                        img: postData.images[0] || null
+                    }
+                    : p
+            );
+            localStorage.setItem("foundPosts", JSON.stringify(posts));
+        } else {
+            // 신규 작성
+            const response = await fetch('https://chajabat.onrender.com/api/v1/posts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    type: 'Found',
+                    title: postData.title,
+                    content: postData.description,
+                    category: postData.category,
+                    location: postData.location,
+                    lost_date: postData.foundDate,
+                    images: postData.images
+                })
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                alert(data.error || '게시글 작성에 실패했습니다.');
+                return;
+            }
+            
+            // 성공 시 localStorage에도 저장 (fallback)
+            let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+            let nickname = localStorage.getItem("nickname") || "사용자";
+            posts.push({
+                id: data.id || postData.id,
+                title: postData.title,
+                description: postData.description,
+                category: postData.category,
+                place: postData.location,
+                date: postData.foundDate,
+                img: postData.images[0] || null,
+                solved: false,
+                author: nickname.trim()
+            });
+            localStorage.setItem("foundPosts", JSON.stringify(posts));
+        }
+    } catch (error) {
+        console.error('게시글 저장 오류:', error);
+        alert('게시글 저장 중 오류가 발생했습니다.');
+        throw error;
+    }
 }
 
 /* =========================================================================
@@ -234,10 +293,20 @@ function setupEvents() {
     });
 
     /* 올리기 */
-    confirmBtn.addEventListener("click", () => {
-        savePost();
-        confirmModal.classList.remove("show");
-        showUploadModal();
+    confirmBtn.addEventListener("click", async () => {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = '저장 중...';
+        
+        try {
+            await savePost();
+            confirmModal.classList.remove("show");
+            showUploadModal();
+        } catch (error) {
+            // 에러는 savePost에서 이미 처리됨
+        } finally {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '올리기';
+        }
     });
 
     /* 업로드 완료 → 홈 또는 detail 이동 */
@@ -251,30 +320,92 @@ function setupEvents() {
 }
 
 /* =========================================================================
-   수정모드 데이터 로드
+   수정모드 데이터 로드 (API 연동)
 =========================================================================== */
-function loadEditData() {
+async function loadEditData() {
     if (!editId) return;
 
-    let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
-    const target = posts.find(p => p.id == editId);
-    if (!target) return;
-
-    titleInput.value = target.title;
-    descriptionInput.value = target.description;
-    locationInput.value = target.place;
-    foundDateInput.value = target.date;
-
-    postData.category = target.category;
-    postData.images = target.img ? [target.img] : [];
-
-    categoryButtons.forEach(btn => {
-        if (btn.dataset.category === target.category) {
-            btn.classList.add("active");
+    const accessToken = localStorage.getItem('access_token');
+    
+    try {
+        // API에서 게시글 상세 정보 가져오기
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
         }
-    });
 
-    updatePreview();
+        const response = await fetch(`https://chajabat.onrender.com/api/v1/posts/${editId}`, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (response.ok) {
+            const target = await response.json();
+            
+            titleInput.value = target.title;
+            descriptionInput.value = target.content || target.description;
+            locationInput.value = target.location;
+            foundDateInput.value = target.lost_date || target.date;
+
+            postData.category = target.category;
+            postData.images = target.images && target.images.length > 0 
+                ? target.images 
+                : (target.img ? [target.img] : []);
+
+            categoryButtons.forEach(btn => {
+                if (btn.dataset.category === target.category) {
+                    btn.classList.add("active");
+                }
+            });
+
+            updatePreview();
+        } else {
+            // API 실패 시 localStorage에서 로드 (fallback)
+            let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+            const target = posts.find(p => p.id == editId);
+            if (!target) return;
+
+            titleInput.value = target.title;
+            descriptionInput.value = target.description;
+            locationInput.value = target.place;
+            foundDateInput.value = target.date;
+
+            postData.category = target.category;
+            postData.images = target.img ? [target.img] : [];
+
+            categoryButtons.forEach(btn => {
+                if (btn.dataset.category === target.category) {
+                    btn.classList.add("active");
+                }
+            });
+
+            updatePreview();
+        }
+    } catch (error) {
+        console.error('게시글 로드 오류:', error);
+        // 에러 발생 시 localStorage에서 로드 (fallback)
+        let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+        const target = posts.find(p => p.id == editId);
+        if (!target) return;
+
+        titleInput.value = target.title;
+        descriptionInput.value = target.description;
+        locationInput.value = target.place;
+        foundDateInput.value = target.date;
+
+        postData.category = target.category;
+        postData.images = target.img ? [target.img] : [];
+
+        categoryButtons.forEach(btn => {
+            if (btn.dataset.category === target.category) {
+                btn.classList.add("active");
+            }
+        });
+
+        updatePreview();
+    }
 }
 
 /* =========================================================================

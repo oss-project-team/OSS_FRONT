@@ -31,10 +31,21 @@
         <h2 class="step-title">기본 정보 입력</h2>
         
         <div class="form-group">
-          <label for="email">학교메일</label>
-          <input type="email" id="email" placeholder="email@edu.hanbat.ac.kr" required>
+          <label for="email">이메일</label>
+          <div style="display: flex; gap: 8px; align-items: flex-start;">
+            <input type="email" id="email" placeholder="이메일을 입력하세요" required style="flex: 1;">
+            <button class="check-email-btn" id="sendVerificationBtn" type="button">인증번호 발송</button>
+          </div>
           <span class="error-message" id="emailError"></span>
-          <button class="check-email-btn" id="checkEmailBtn">중복 확인</button>
+          
+          <div id="verificationSection" style="display: none; margin-top: 12px;">
+            <div style="display: flex; gap: 8px; align-items: flex-start;">
+              <input type="text" id="verificationCode" placeholder="인증번호를 입력하세요" style="flex: 1;">
+              <button class="check-email-btn" id="verifyCodeBtn" type="button">인증 확인</button>
+            </div>
+            <span class="error-message" id="verificationError"></span>
+            <div id="verificationStatus" style="margin-top: 4px; font-size: 12px;"></div>
+          </div>
         </div>
 
         <div class="form-group">

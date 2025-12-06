@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const pw = passwordInput.value;
 
         if (email === "" || pw === "") {
-            alert("학교메일과 비밀번호를 입력해주세요.");
+            alert("이이메일과 비밀번호를 입력해주세요.");
             return;
         }
 
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             // 서버로 로그인 요청 보내기
-            const response = await fetch("/api/v1/auth/login", {
+            const response = await fetch("https://chajabat.onrender.com/api/v1/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -29,21 +29,57 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
             });
 
-            const data = await response.json();
+            // 응답 상태 확인
+            console.log("로그인 응답 상태:", response.status);
+            
+            let data;
+            try {
+                const text = await response.text();
+                console.log("로그인 응답 본문:", text);
+                if (text) {
+                    data = JSON.parse(text);
+                } else {
+                    data = {};
+                }
+            } catch (jsonError) {
+                console.error("JSON 파싱 오류:", jsonError);
+                alert("서버 응답을 처리하는 중 오류가 발생했습니다.");
+                return;
+            }
 
             if (response.ok) {
                 // 로그인 성공 - 백엔드가 반환하는 access_token과 refresh_token 저장
+                console.log("로그인 성공, 토큰:", data);
+                
                 if (data.access_token) {
                     localStorage.setItem("access_token", data.access_token);
+                    console.log("access_token 저장 완료");
+                } else {
+                    console.error("access_token이 응답에 없습니다!");
                 }
+                
                 if (data.refresh_token) {
                     localStorage.setItem("refresh_token", data.refresh_token);
+                    console.log("refresh_token 저장 완료");
+                } else {
+                    console.error("refresh_token이 응답에 없습니다!");
                 }
+                
+                // 이메일 저장 (작성자 확인용)
+                localStorage.setItem("user_email", email);
+                
+                // 닉네임도 저장 (회원가입 시 저장했다면)
+                if (data.nickname) {
+                    localStorage.setItem("nickname", data.nickname);
+                }
+                
                 // 홈 페이지로 이동
                 window.location.href = "../home/home.html";
             } else {
                 // 로그인 실패 - 백엔드가 반환하는 error 메시지 표시
-                alert(data.error || "로그인에 실패했습니다. 다시 시도해주세요.");
+                console.error("로그인 실패:", data);
+                const errorMsg = data.error || data.message || `로그인에 실패했습니다. (상태 코드: ${response.status})`;
+                alert(errorMsg);
             }
         } catch (error) {
             console.error("로그인 오류:", error);
