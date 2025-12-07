@@ -234,7 +234,16 @@ document.getElementById("confirmBtn").addEventListener("click", async () => {
                     category: postData.category,
                     location: postData.location,
                     lost_date: postData.lostDate,
-                    images: postData.images.map(img => img.url || img)
+                    images: postData.images.map(img => {
+                        // base64 문자열이면 그대로 사용
+                        if (typeof img === 'string') {
+                            if (img.startsWith('data:image')) {
+                                return img;
+                            }
+                            return img;
+                        }
+                        return img.url || img.data || img;
+                    })
                 })
             });
 
@@ -276,7 +285,17 @@ document.getElementById("confirmBtn").addEventListener("click", async () => {
                     category: postData.category,
                     location: postData.location,
                     lost_date: postData.lostDate,
-                    images: postData.images.map(img => img.url || img)
+                    images: postData.images.map(img => {
+                        // base64 문자열이면 그대로 사용
+                        if (typeof img === 'string') {
+                            if (img.startsWith('data:image')) {
+                                return img;
+                            }
+                            return img;
+                        }
+                        // 객체인 경우 url 속성 확인
+                        return img.url || img.data || img;
+                    })
                 })
             });
 

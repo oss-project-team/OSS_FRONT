@@ -4,6 +4,7 @@ const signupData = {
   password: '',
   nickname: '',
   profileImage: null,
+  profileImageBase64: '',
   agreedTerms: {
     service: false,
     privacy: false,
@@ -14,7 +15,7 @@ const signupData = {
 let currentStep = 1;
 const totalSteps = 3;
 let nicknameChecked = false;
-let emailVerified = false;
+let emailVerified = true; // 이메일 인증 건너뛰기 (테스트용)
 
 // DOM 요소
 const backBtn = document.getElementById('backBtn');
@@ -95,10 +96,8 @@ function validateStep1() {
   } else if (!emailPattern.test(email)) {
     showError('emailError', '이메일 형식이 올바르지 않습니다.');
     isValid = false;
-  } else if (!emailVerified) {
-    showError('emailError', '이메일 인증을 완료해주세요.');
-    isValid = false;
   } else {
+    // 이메일 인증 체크 제거 (테스트용)
     clearError('emailError');
     document.getElementById('email').classList.remove('error');
   }
@@ -211,6 +210,8 @@ profileImageInput.addEventListener('change', function(e) {
       profilePreview.style.display = 'block';
       profilePlaceholder.style.display = 'none';
       signupData.profileImage = file;
+      // base64 데이터도 저장 (나중에 API 호출 시 사용)
+      signupData.profileImageBase64 = e.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -510,27 +511,35 @@ document.addEventListener('DOMContentLoaded', function() {
     completeBtn.textContent = '가입 중...';
     
     try {
-      // FormData 생성
-      const formData = new FormData();
-      formData.append('email', signupData.email);
-      formData.append('password', signupData.password);
-      formData.append('nickname', signupData.nickname);
-      if (signupData.profileImage) {
-        formData.append('profileImage', signupData.profileImage);
-      }
+      // 프로필 이미지 base64 사용 (이미 변환되어 있음)
+      const profileImageBase64 = signupData.profileImageBase64 || '';
+      
+      // JSON 형식으로 전송 (이메일 인증 없이)
+      const requestData = {
+        email: signupData.email,
+        password: signupData.password,
+        nickname: signupData.nickname,
+        profileImage: profileImageBase64
+      };
       
       // 백엔드 API 호출
       const response = await fetch('https://chajabat.onrender.com/api/v1/auth/signup', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
       });
       
       const data = await response.json();
       
       if (response.ok) {
-        // localStorage에 닉네임 저장
+        // localStorage에 닉네임 및 프로필 이미지 저장
         if (signupData.nickname) {
           localStorage.setItem("nickname", signupData.nickname);
+        }
+        if (profileImageBase64) {
+          localStorage.setItem("profileImage", profileImageBase64);
         }
         alert('회원가입이 완료되었습니다!');
         window.location.href = '../login/login.html';

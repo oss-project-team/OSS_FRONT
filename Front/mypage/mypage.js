@@ -45,7 +45,7 @@ async function loadMyPosts() {
             const data = await response.json();
             const posts = data.posts || data || [];
 
-            list.innerHTML = "";
+    list.innerHTML = "";
 
             if (posts.length === 0) {
                 list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
@@ -68,45 +68,45 @@ async function loadMyPosts() {
             });
         } else {
             // API 실패 시 localStorage에서 로드 (fallback)
-            const currentNickname = localStorage.getItem("nickname") || "";
-            if (!currentNickname || currentNickname.trim() === "") {
-                list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
-                return;
-            }
+    const currentNickname = localStorage.getItem("nickname") || "";
+    if (!currentNickname || currentNickname.trim() === "") {
+        list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
+        return;
+    }
 
-            const lostPosts = JSON.parse(localStorage.getItem("lostPosts")) || [];
-            const foundPosts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+    const lostPosts = JSON.parse(localStorage.getItem("lostPosts")) || [];
+    const foundPosts = JSON.parse(localStorage.getItem("foundPosts")) || [];
 
-            const myLostPosts = lostPosts
-                .filter(p => p.author && p.author.trim() === currentNickname.trim())
-                .map(p => ({...p, type:"lost"}));
-            
-            const myFoundPosts = foundPosts
-                .filter(p => p.author && p.author.trim() === currentNickname.trim())
-                .map(p => ({...p, type:"found"}));
+    const myLostPosts = lostPosts
+        .filter(p => p.author && p.author.trim() === currentNickname.trim())
+        .map(p => ({...p, type:"lost"}));
+    
+    const myFoundPosts = foundPosts
+        .filter(p => p.author && p.author.trim() === currentNickname.trim())
+        .map(p => ({...p, type:"found"}));
 
-            const allPosts = [...myLostPosts, ...myFoundPosts];
+    const allPosts = [...myLostPosts, ...myFoundPosts];
 
-            if (allPosts.length === 0) {
-                list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
-                return;
-            }
+    if (allPosts.length === 0) {
+        list.innerHTML = `<li style="color:#777;">작성한 게시글이 없습니다.</li>`;
+        return;
+    }
 
-            allPosts.sort((a,b) => (b.id||0) - (a.id||0));
+    allPosts.sort((a,b) => (b.id||0) - (a.id||0));
 
-            allPosts.forEach(post => {
-                const li = document.createElement("li");
+    allPosts.forEach(post => {
+        const li = document.createElement("li");
                 li.textContent = post.title;
 
-                li.addEventListener("click", () => {
-                    if(post.type === "lost")
-                        window.location.href = `../detail_lost/detail_lost.html?id=${post.id}`;
-                    else
-                        window.location.href = `../detail/detail.html?id=${post.id}`;
-                });
+        li.addEventListener("click", () => {
+            if(post.type === "lost")
+                window.location.href = `../detail_lost/detail_lost.html?id=${post.id}`;
+            else
+                window.location.href = `../detail/detail.html?id=${post.id}`;
+        });
 
-                list.appendChild(li);
-            });
+        list.appendChild(li);
+    });
         }
     } catch (error) {
         console.error("게시글 로드 오류:", error);
@@ -221,7 +221,7 @@ async function saveProfile() {
             requestData.nickname = nicknameInput;
             hasChanges = true;
         }
-
+        
         // 프로필 이미지 변경 처리 (이미지 파일은 base64로 변환하여 전송)
         if(upload.files && upload.files[0]){
             // 파일을 base64로 변환
@@ -291,40 +291,40 @@ async function handleProfileResponse(response, nicknameInput, currentNickname, n
     try {
         if (response.ok) {
             const data = await response.json();
-            
+        
             // 닉네임 업데이트
             if (nicknameInput && nicknameInput !== currentNickname) {
                 const oldNickname = currentNickname;
-                nickname.textContent = nicknameInput;
-                localStorage.setItem("nickname", nicknameInput);
-                
-                // 기존 게시물의 작성자 닉네임도 업데이트
-                if(oldNickname && oldNickname.trim() !== "" && oldNickname !== nicknameInput) {
-                    const updatedCount = updatePostsAuthor(oldNickname.trim(), nicknameInput);
-                    console.log("업데이트된 게시물 수:", updatedCount);
-                }
-                
-                // 중복 확인 상태 초기화
-                nicknameChecked = false;
-                document.getElementById("nicknameError").textContent = "";
-                document.getElementById("nickInput").value = "";
-            }
+        nickname.textContent = nicknameInput;
+        localStorage.setItem("nickname", nicknameInput);
+        
+        // 기존 게시물의 작성자 닉네임도 업데이트
+        if(oldNickname && oldNickname.trim() !== "" && oldNickname !== nicknameInput) {
+            const updatedCount = updatePostsAuthor(oldNickname.trim(), nicknameInput);
+            console.log("업데이트된 게시물 수:", updatedCount);
+        }
+        
+        // 중복 확인 상태 초기화
+        nicknameChecked = false;
+        document.getElementById("nicknameError").textContent = "";
+        document.getElementById("nickInput").value = "";
+    }
 
             // 프로필 이미지 업데이트
             if (upload.files && upload.files[0]) {
-                const reader = new FileReader();
+        const reader = new FileReader();
                 reader.onload = e => {
-                    profileImage.src = e.target.result;
-                    localStorage.setItem("profileImage", e.target.result);
+            profileImage.src = e.target.result;
+            localStorage.setItem("profileImage", e.target.result);
                 };
-                reader.readAsDataURL(upload.files[0]);
+        reader.readAsDataURL(upload.files[0]);
             } else if (data.profileImage) {
                 // 서버에서 반환한 프로필 이미지 URL 사용
                 profileImage.src = data.profileImage;
                 localStorage.setItem("profileImage", data.profileImage);
             }
 
-            showPopup("프로필이 저장되었습니다.");
+    showPopup("프로필이 저장되었습니다.");
         } else {
             const errorData = await response.json();
             alert(errorData.error || "프로필 저장에 실패했습니다.");
@@ -482,11 +482,11 @@ async function loadProfile(){
     } catch (error) {
         console.error("프로필 로드 오류:", error);
         // 오류 발생 시 localStorage에서 로드 (fallback)
-        const nickname = localStorage.getItem("nickname");
-        const image = localStorage.getItem("profileImage");
+    const nickname = localStorage.getItem("nickname");
+    const image = localStorage.getItem("profileImage");
 
-        if(nickname) document.getElementById("nickname").textContent = nickname;
-        if(image) document.getElementById("profileImage").src = image;
+    if(nickname) document.getElementById("nickname").textContent = nickname;
+    if(image) document.getElementById("profileImage").src = image;
     }
 }
 
@@ -601,9 +601,9 @@ async function savePersonalInfo(){
         });
 
         if (response.ok) {
-            showPopup("개인 정보가 변경되었습니다.");
-            emailInput.value = "";
-            phoneInput.value = "";
+    showPopup("개인 정보가 변경되었습니다.");
+    emailInput.value = "";
+    phoneInput.value = "";
         } else {
             const errorData = await response.json();
             alert(errorData.error || "개인 정보 변경에 실패했습니다.");

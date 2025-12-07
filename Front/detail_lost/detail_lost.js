@@ -60,14 +60,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     document.querySelector(".user-name").textContent = authorName;
 
-    // 프로필 이미지 (마이페이지에서 저장된 값 사용)
-    const myProfileImg = localStorage.getItem("myProfileImg");
-    const profileBox = document.querySelector(".user-profile");
-    if (post.profileImg || myProfileImg) {
-        profileBox.style.backgroundImage = `url(${post.profileImg || myProfileImg})`;
-        profileBox.style.backgroundSize = "cover";
-        profileBox.style.backgroundPosition = "center";
-    }
+    // 프로필 이미지 로드
+    console.log('게시글 데이터:', {
+        author_email: post.author_email,
+        author_profile_image: post.author_profile_image,
+        author_nickname: post.author_nickname
+    });
+    await loadAuthorProfileImage(post.author_email, post.author_profile_image);
 
     // 해결 상태 표시
     const statusText = document.querySelector(".status-text");
@@ -88,12 +87,102 @@ document.addEventListener("DOMContentLoaded", async () => {
     const isAuthor = currentUserEmail && postAuthorEmail && currentUserEmail === postAuthorEmail;
     
     // 작성자일 경우에만 수정/삭제 버튼 표시
+    const msgBtn = document.getElementById("msgBtn");
     const ownerBtns = document.getElementById("ownerBtns");
+    const statusToggleBtn = document.getElementById("statusToggleBtn");
     if (isAuthor) {
         ownerBtns.style.display = "flex";
+        statusToggleBtn.style.display = "flex";
+        if (msgBtn) msgBtn.style.display = "none";
     } else {
         ownerBtns.style.display = "none";
+        statusToggleBtn.style.display = "none";
+        if (msgBtn) msgBtn.style.display = "block";
     }
+    
+    // 🔥 쪽지 보내기 (게시글 정보 저장 → contact에 표시될 제목/카테고리 전달)
+    if (msgBtn) {
+        msgBtn.addEventListener("click", () => {
+            const user = document.querySelector(".user-name").textContent.trim();  // 상대 닉네임
+            const title = document.getElementById("detailTitle").textContent.trim();
+            const category = document.getElementById("detailCategory").textContent.trim();
+            const recipientEmail = post.author_email || post.author || '';  // 상대방 이메일
+
+            // 🔥 기존 chatInfo 불러오기
+            let chatInfo = JSON.parse(localStorage.getItem("chatInfo") || "{}");
+
+            // 🔥 user 기준으로 제목/카테고리 저장
+            chatInfo[user] = { title, category };
+            localStorage.setItem("chatInfo", JSON.stringify(chatInfo));
+
+            // contact로 이동 (user와 email 전달)
+            const params = new URLSearchParams({
+                user: user,
+                title: title,
+                category: category
+            });
+            if (recipientEmail) {
+                params.append('email', recipientEmail);
+            }
+            window.location.href = "../contact/contact.html?" + params.toString();
+        });
+    }
+    
+    // 해결 상태 전환 버튼 (상단 토글 아이콘) - API 연동
+    statusToggleBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        
+        if (!accessToken) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        
+        // 회전 애니메이션
+        const icon = statusToggleBtn.querySelector(".material-icons");
+        icon.style.transform = "rotate(360deg)";
+        icon.style.transition = "transform 0.3s";
+        
+        setTimeout(() => {
+            icon.style.transform = "rotate(0deg)";
+        }, 300);
+        
+        const newStatus = post.status === 'Completed' ? 'Waiting' : 'Completed';
+        
+        try {
+            const response = await fetch(`https://chajabat.onrender.com/api/v1/posts/${postId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            if (response.ok) {
+                post.status = newStatus;
+        
+                // 상태 업데이트
+                if (post.status === 'Completed') {
+                    statusText.textContent = "해결 완료";
+                    statusDot.style.background = "#2ecc71";
+                } else {
+                    statusText.textContent = "해결 중";
+                    statusDot.style.background = "#ff9800";
+                }
+
+                // localStorage에도 업데이트 (fallback)
+                let posts = JSON.parse(localStorage.getItem("lostPosts")) || [];
+                posts = posts.map(p => p.id === postId ? { ...p, solved: post.status === 'Completed' } : p);
+                localStorage.setItem("lostPosts", JSON.stringify(posts));
+            } else {
+                const data = await response.json();
+                alert(data.error || '상태 변경에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('상태 변경 오류:', error);
+            alert('상태 변경 중 오류가 발생했습니다.');
+        }
+    });
 
     /* ================== ✏ 수정하기 ================== */
     document.getElementById("editBtn").onclick = () => {
@@ -179,3 +268,71 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 });
+
+/* ================== 작성자 프로필 이미지 로드 ================== */
+async function loadAuthorProfileImage(authorEmail, authorProfileImage) {
+    const profileBox = document.querySelector(".user-profile");
+    if (!profileBox) return;
+    
+    console.log('프로필 이미지 로드 시작:', {
+        authorEmail,
+        authorProfileImage,
+        hasImage: !!authorProfileImage
+    });
+    
+    // 백엔드에서 프로필 이미지가 함께 반환된 경우
+    if (authorProfileImage && authorProfileImage.trim() !== '') {
+        console.log('백엔드에서 받은 프로필 이미지 사용:', authorProfileImage);
+        profileBox.style.backgroundImage = `url(${authorProfileImage})`;
+        profileBox.style.backgroundSize = "cover";
+        profileBox.style.backgroundPosition = "center";
+        return;
+    }
+    
+    // 작성자 이메일이 없으면 기본 이미지 사용
+    if (!authorEmail) {
+        return;
+    }
+    
+    // 현재 로그인한 사용자와 작성자가 같은 경우 localStorage에서 가져오기
+    const currentUserEmail = localStorage.getItem('user_email');
+    if (currentUserEmail === authorEmail) {
+        const myProfileImg = localStorage.getItem("profileImage");
+        if (myProfileImg) {
+            profileBox.style.backgroundImage = `url(${myProfileImg})`;
+            profileBox.style.backgroundSize = "cover";
+            profileBox.style.backgroundPosition = "center";
+            return;
+        }
+    }
+    
+    // 작성자의 프로필 이미지를 가져오기 위해 사용자 프로필 API 호출
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken) {
+        try {
+            const profileResponse = await fetch(`https://chajabat.onrender.com/api/v1/users/${encodeURIComponent(authorEmail)}/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+            
+            if (profileResponse.ok) {
+                const profileData = await profileResponse.json();
+                console.log('프로필 API 응답:', profileData);
+                if (profileData.profileImage && profileData.profileImage.trim() !== '') {
+                    console.log('프로필 API에서 받은 이미지 사용:', profileData.profileImage);
+                    profileBox.style.backgroundImage = `url(${profileData.profileImage})`;
+                    profileBox.style.backgroundSize = "cover";
+                    profileBox.style.backgroundPosition = "center";
+                    return;
+                }
+            } else {
+                console.error('프로필 API 호출 실패:', profileResponse.status, await profileResponse.text());
+            }
+        } catch (error) {
+            console.error('프로필 이미지 로드 오류:', error);
+        }
+    }
+    
+    // 모든 방법이 실패하면 기본 스타일 유지
+}

@@ -23,47 +23,7 @@
     </header>
 
     <div class="contact-wrapper">
-
-        <div class="msg-card" id="card-친구A" onclick="openChat('친구A')">
-            <div class="avatar">A</div>
-            <div class="text-box">
-                <p class="name">친구A <span id="dot-친구A" class="unread-dot"></span></p>
-                <p class="sub-info" id="info-친구A">게시글 제목 · 카테고리</p>
-                <p id="preview-친구A" class="preview">최근 대화 없음</p>
-            </div>
-            <button class="delete-btn" onclick="deleteChat('친구A',event)"><i class="material-icons">delete</i></button>
-        </div>
-
-        <div class="msg-card" id="card-친구B" onclick="openChat('친구B')">
-            <div class="avatar">B</div>
-            <div class="text-box">
-                <p class="name">친구B <span id="dot-친구B" class="unread-dot"></span></p>
-                <p class="sub-info" id="info-친구B"></p>
-                <p id="preview-친구B" class="preview">최근 대화 없음</p>
-            </div>
-            <button class="delete-btn" onclick="deleteChat('친구B',event)"><i class="material-icons">delete</i></button>
-        </div>
-
-        <div class="msg-card" id="card-친구C" onclick="openChat('친구C')">
-            <div class="avatar">C</div>
-            <div class="text-box">
-                <p class="name">친구C <span id="dot-친구C" class="unread-dot"></span></p>
-                <p class="sub-info" id="info-친구C"></p>
-                <p id="preview-친구C" class="preview">최근 대화 없음</p>
-            </div>
-            <button class="delete-btn" onclick="deleteChat('친구C',event)"><i class="material-icons">delete</i></button>
-        </div>
-
-        <div class="msg-card" id="card-친구D" onclick="openChat('친구D')">
-            <div class="avatar">D</div>
-            <div class="text-box">
-                <p class="name">친구D <span id="dot-친구D" class="unread-dot"></span></p>
-                <p class="sub-info" id="info-친구D"></p>
-                <p id="preview-친구D" class="preview">최근 대화 없음</p>
-            </div>
-            <button class="delete-btn" onclick="deleteChat('친구D',event)"><i class="material-icons">delete</i></button>
-        </div>
-
+        <!-- 쪽지 목록은 JavaScript에서 동적으로 생성됩니다 -->
     </div>
 </div>
 
@@ -81,9 +41,6 @@
     <div id="chatContent" class="chat-content"></div>
 
     <div class="chat-input-area">
-        <label class="img-upload">
-            📎<input type="file" accept="image/*" onchange="sendImage(event)">
-        </label>
         <input id="chatInput" placeholder="메시지를 입력하세요" onkeydown="handleEnter(event)">
         <button class="send-btn" onclick="sendMessage()">➤</button>
     </div>
@@ -104,7 +61,7 @@
     <img id="modalImg" class="modal-content-img" alt="확대 이미지">
 </div>
 
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottomNav">
     <button class="nav-item active" onclick="location.reload()">
         <i class="material-icons nav-icon">mail</i>
         <span class="nav-label">쪽지함</span>

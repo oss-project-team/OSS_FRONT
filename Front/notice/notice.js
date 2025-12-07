@@ -36,13 +36,19 @@ async function loadAlerts() {
         if (response.ok) {
             const alerts = await response.json();
             renderAlerts(alerts);
+        } else if (response.status === 404) {
+            // 백엔드에 알림 API가 없는 경우 빈 목록 표시
+            console.log('알림 API가 아직 구현되지 않았습니다.');
+            renderAlerts([]);
         } else {
             console.error('알림 로드 실패:', response.status);
-            // API 실패 시 기본 알림 표시 (fallback)
+            // API 실패 시 빈 목록 표시
+            renderAlerts([]);
         }
     } catch (error) {
         console.error('알림 로드 오류:', error);
-        // 에러 발생 시 기본 알림 표시 (fallback)
+        // 에러 발생 시 빈 목록 표시
+        renderAlerts([]);
     }
 }
 
@@ -190,12 +196,12 @@ document.querySelectorAll(".notice-item").forEach(item=>{
 ============================================================ */
 const noticeBell=document.getElementById("noticeBell");
 if (noticeBell) {
-    let alarm=true;
-    noticeBell.onclick=()=>{
-        alarm = !alarm;
-        noticeBell.textContent = alarm ? "notifications" : "notifications_off";
-        noticeBell.classList.toggle("off", !alarm);
-    };
+let alarm=true;
+noticeBell.onclick=()=>{
+    alarm = !alarm;
+    noticeBell.textContent = alarm ? "notifications" : "notifications_off";
+    noticeBell.classList.toggle("off", !alarm);
+};
 }
 
 

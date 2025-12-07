@@ -127,7 +127,16 @@ async function savePost() {
                     category: postData.category,
                     location: postData.location,
                     lost_date: postData.foundDate,
-                    images: postData.images
+                    images: postData.images.map(img => {
+                        // base64 문자열이면 그대로 사용
+                        if (typeof img === 'string') {
+                            if (img.startsWith('data:image')) {
+                                return img;
+                            }
+                            return img;
+                        }
+                        return img.url || img.data || img;
+                    })
                 })
             });
 
@@ -156,27 +165,76 @@ async function savePost() {
             localStorage.setItem("foundPosts", JSON.stringify(posts));
     } else {
             // 신규 작성
+            // 이미지 배열 처리 - base64 문자열을 그대로 전송 (백엔드에서 처리)
+            const imageUrls = postData.images.map(img => {
+                // base64 문자열이면 그대로 사용, 아니면 url 속성 확인
+                if (typeof img === 'string') {
+                    // base64 데이터 URL인지 확인
+                    if (img.startsWith('data:image')) {
+                        return img;
+                    }
+                    return img;
+                }
+                // 객체인 경우 url 속성 또는 base64 데이터 확인
+                return img.url || img.data || img;
+            });
+            
+            const requestBody = {
+                type: 'Found',
+                title: postData.title,
+                content: postData.description,
+                category: postData.category,
+                location: postData.location,
+                lost_date: postData.foundDate,
+                images: imageUrls
+            };
+            
+            console.log('게시글 작성 요청:', {
+                ...requestBody,
+                images: imageUrls.map((img, idx) => `이미지${idx + 1}: ${img ? img.substring(0, 50) + '...' : '없음'}`)
+            });
+            
             const response = await fetch('https://chajabat.onrender.com/api/v1/posts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 },
-                body: JSON.stringify({
-                    type: 'Found',
-                    title: postData.title,
-                    content: postData.description,
-                    category: postData.category,
-                    location: postData.location,
-                    lost_date: postData.foundDate,
-                    images: postData.images
-                })
+                body: JSON.stringify(requestBody)
             });
 
-            const data = await response.json();
-            
+            // 응답 처리
             if (!response.ok) {
-                alert(data.error || '게시글 작성에 실패했습니다.');
+                let errorMessage = `게시글 작성에 실패했습니다. (${response.status})`;
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorMessage;
+                } catch (e) {
+                    const errorText = await response.text();
+                    if (errorText) {
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.error || errorMessage;
+                        } catch (e2) {
+                            errorMessage = errorText || errorMessage;
+                        }
+                    }
+                }
+                alert(errorMessage);
+                return;
+            }
+            
+            let data;
+            try {
+                const responseText = await response.text();
+                if (responseText) {
+                    data = JSON.parse(responseText);
+                } else {
+                    data = {};
+                }
+            } catch (jsonError) {
+                console.error('JSON 파싱 오류:', jsonError);
+                alert('서버 응답을 처리하는 중 오류가 발생했습니다.');
                 return;
             }
             

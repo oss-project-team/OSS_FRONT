@@ -58,6 +58,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     document.querySelector(".user-name").textContent = authorName;
 
+    // 프로필 이미지 로드
+    console.log('게시글 데이터:', {
+        author_email: post.author_email,
+        author_profile_image: post.author_profile_image,
+        author_nickname: post.author_nickname
+    });
+    await loadAuthorProfileImage(post.author_email, post.author_profile_image);
+
     // 해결 상태 표시
     const statusText = document.querySelector(".status-text");
     const statusDot = document.querySelector(".status-dot");
@@ -256,3 +264,71 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 });
+
+/* ================== 작성자 프로필 이미지 로드 ================== */
+async function loadAuthorProfileImage(authorEmail, authorProfileImage) {
+    const profileBox = document.querySelector(".user-profile");
+    if (!profileBox) return;
+    
+    console.log('프로필 이미지 로드 시작:', {
+        authorEmail,
+        authorProfileImage,
+        hasImage: !!authorProfileImage
+    });
+    
+    // 백엔드에서 프로필 이미지가 함께 반환된 경우
+    if (authorProfileImage && authorProfileImage.trim() !== '') {
+        console.log('백엔드에서 받은 프로필 이미지 사용:', authorProfileImage);
+        profileBox.style.backgroundImage = `url(${authorProfileImage})`;
+        profileBox.style.backgroundSize = "cover";
+        profileBox.style.backgroundPosition = "center";
+        return;
+    }
+    
+    // 작성자 이메일이 없으면 기본 이미지 사용
+    if (!authorEmail) {
+        return;
+    }
+    
+    // 현재 로그인한 사용자와 작성자가 같은 경우 localStorage에서 가져오기
+    const currentUserEmail = localStorage.getItem('user_email');
+    if (currentUserEmail === authorEmail) {
+        const myProfileImg = localStorage.getItem("profileImage");
+        if (myProfileImg) {
+            profileBox.style.backgroundImage = `url(${myProfileImg})`;
+            profileBox.style.backgroundSize = "cover";
+            profileBox.style.backgroundPosition = "center";
+            return;
+        }
+    }
+    
+    // 작성자의 프로필 이미지를 가져오기 위해 사용자 프로필 API 호출
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken) {
+        try {
+            const profileResponse = await fetch(`https://chajabat.onrender.com/api/v1/users/${encodeURIComponent(authorEmail)}/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+            
+            if (profileResponse.ok) {
+                const profileData = await profileResponse.json();
+                console.log('프로필 API 응답:', profileData);
+                if (profileData.profileImage && profileData.profileImage.trim() !== '') {
+                    console.log('프로필 API에서 받은 이미지 사용:', profileData.profileImage);
+                    profileBox.style.backgroundImage = `url(${profileData.profileImage})`;
+                    profileBox.style.backgroundSize = "cover";
+                    profileBox.style.backgroundPosition = "center";
+                    return;
+                }
+            } else {
+                console.error('프로필 API 호출 실패:', profileResponse.status, await profileResponse.text());
+            }
+        } catch (error) {
+            console.error('프로필 이미지 로드 오류:', error);
+        }
+    }
+    
+    // 모든 방법이 실패하면 기본 스타일 유지
+}

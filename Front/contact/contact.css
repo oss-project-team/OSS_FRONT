@@ -76,14 +76,23 @@ html, body {
     width: 100%; margin-bottom: 12px;
     background: #fff; border-radius: 16px;
     padding: 16px; display: flex; align-items: center;
-    cursor: pointer; transition: all 0.2s ease;
+    cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     position: relative; border: 1px solid #f0f0f0;
+    touch-action: pan-y; /* 수직 스크롤 허용, 수평 스와이프 제어 */
 }
 .msg-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     border-color: #e0e0e0;
+}
+.msg-card.swiped {
+    transform: translateX(-80px);
+    transition: transform 0.3s ease;
+}
+.msg-card.swiped .delete-btn {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .avatar {
@@ -132,6 +141,7 @@ html, body {
     padding: 6px 12px; border-radius: 8px; cursor: pointer;
     opacity: 0; pointer-events: none; transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(255,77,77,0.3);
+    z-index: 10;
 }
 .msg-card:hover .delete-btn { opacity: 1; pointer-events: auto; }
 .delete-btn:hover { background: #e24646; transform: translateY(-50%) scale(1.05); }
@@ -203,7 +213,7 @@ html, body {
 /* ================= 입력창 ================= */
 .chat-input-area {
     position: fixed;
-    bottom: 60px; /* 하단 네비 위에 위치 */
+    bottom: 0;
     
     /* 중앙 정렬 트릭 */
     left: 50%; transform: translateX(-50%);
@@ -249,7 +259,6 @@ html, body {
 .send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(93,138,168,0.4); }
 .send-btn:active { transform: scale(0.95); }
 
-
 /* ================= 하단 네비 ================= */
 .bottom-nav {
     position: fixed;
@@ -265,6 +274,10 @@ html, body {
     border-top: 1px solid #e8e8e8; z-index: 1000;
 }
 
+.bottom-nav.hidden {
+    display: none;
+}
+
 .nav-item {
     background: none; border: none;
     display: flex; flex-direction: column;
@@ -275,6 +288,8 @@ html, body {
 .nav-item.active { color: #009ab7; }
 .nav-icon, .nav-item .material-icons { font-size: 24px; }
 .nav-label { font-size: 12px; }
+
+
 
 
 /* ================= 삭제 팝업 ================= */
