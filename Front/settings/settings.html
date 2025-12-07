@@ -2,15 +2,14 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>설정</title>
     <link rel="stylesheet" href="settings.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
 
-<!-- ========================================================= -->
-<!-- ① 설정 메인 -->
-<!-- ========================================================= -->
 <section class="page active" id="settingsMain">
     <header class="top-header">
         <button class="back-btn" onclick="goBackFromSettings()">
@@ -21,7 +20,7 @@
 
     <div class="card">
         <h3 class="card-title">계정 및 보안</h3>
-        <div class="card-item" onclick="openPwCheckPage()">로그인 방식 변경</div>
+        <div class="card-item" onclick="openPwCheckPage()">비밀번호 변경</div>
         <div class="card-item" onclick="openLogoutConfirm()">로그아웃</div>
         <div class="card-item" onclick="openWithdrawPage()">회원탈퇴</div>
     </div>
@@ -65,9 +64,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ② 비밀번호 확인 -->
-<!-- ========================================================= -->
 <section class="page" id="passwordCheckPage">
     <header class="sub-header">
         <button class="back-btn" onclick="showMain()">
@@ -77,19 +73,16 @@
     </header>
 
     <div class="content-box">
-        <label>비밀번호</label>
+        <label>현재 비밀번호 입력</label>
         <input type="password" id="pwInput" class="input">
         <span id="pwErrorBox" class="error-msg"></span>
     </div>
 
-    <button class="next-btn" onclick="goLoginMethod()">다음</button>
+    <button class="next-btn" onclick="goToPasswordChange()">다음</button>
 </section>
 
 
 
-<!-- ========================================================= -->
-<!-- ③ 로그인 방식 변경 -->
-<!-- ========================================================= -->
 <section class="page" id="loginMethodPage">
     <header class="sub-header">
         <button class="back-btn" onclick="showPwCheck()">
@@ -109,15 +102,12 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ④ 비밀번호 변경 -->
-<!-- ========================================================= -->
 <section class="page" id="passwordChangePage">
     <header class="sub-header">
-        <button class="back-btn" onclick="goBackToMethodPage()">
+        <button class="back-btn" onclick="showPwCheck()">
             <i class="material-icons">arrow_back</i>
         </button>
-        <span>변경할 비밀번호 설정</span>
+        <span>비밀번호 변경</span>
     </header>
 
     <div class="content-box">
@@ -135,9 +125,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑤ 패턴 1차 입력 -->
-<!-- ========================================================= -->
 <section class="page" id="patternSetPage">
     <header class="sub-header">
         <button class="back-btn" onclick="goBackToMethodPage()">
@@ -155,9 +142,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑥ 패턴 2차 입력 -->
-<!-- ========================================================= -->
 <section class="page" id="patternConfirmPage">
     <header class="sub-header">
         <button class="back-btn" onclick="openPatternSetPage()">
@@ -175,9 +159,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑦ 회원탈퇴 -->
-<!-- ========================================================= -->
 <section class="page" id="withdrawPage">
     <header class="sub-header">
         <button class="back-btn" onclick="showMain()">
@@ -186,7 +167,6 @@
         <span>회원탈퇴</span>
     </header>
 
-    <!-- 약관 박스 -->
     <div class="withdraw-card">
         <h3 class="section-title">회원탈퇴 약관</h3>
 
@@ -203,7 +183,6 @@
         <span id="withdrawError" class="error-msg"></span>
     </div>
 
-    <!-- 이유 선택 박스 -->
     <div class="withdraw-card">
         <h3 class="section-title">탈퇴 이유 선택</h3>
 
@@ -223,9 +202,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑧ 문의하기 메인 -->
-<!-- ========================================================= -->
 <section class="page" id="supportMainPage">
     <header class="sub-header">
         <button class="back-btn" onclick="showMain()">
@@ -245,9 +221,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑨ 문의 글 작성 -->
-<!-- ========================================================= -->
 <section class="page" id="inquiryWritePage">
     <header class="sub-header">
         <button class="back-btn" onclick="openSupportMainPage()">
@@ -281,9 +254,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑩ 문의 내역 -->
-<!-- ========================================================= -->
 <section class="page" id="inquiryListPage">
     <header class="sub-header">
         <button class="back-btn" onclick="openSupportMainPage()">
@@ -301,9 +271,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑪ 이용약관 -->
-<!-- ========================================================= -->
 <section class="page" id="termsPage">
     <header class="sub-header">
         <button class="back-btn" onclick="showMain()">
@@ -334,9 +301,6 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑫ 개인정보 처리 방침 -->
-<!-- ========================================================= -->
 <section class="page" id="privacyPage">
     <header class="sub-header">
         <button class="back-btn" onclick="showMain()">
@@ -367,12 +331,8 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ⑬ 팝업 -->
-<!-- ========================================================= -->
 <div id="popupModal" class="modal hidden">
     <div class="modal-content">
-        <!-- 🔥 확인 버튼은 JS에서만 생성 → 여기에는 메시지 영역만 둠 -->
         <p id="popupMsg"></p>
     </div>
 </div>

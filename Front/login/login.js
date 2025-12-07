@@ -2,15 +2,35 @@ document.addEventListener("DOMContentLoaded", function() {
     const loginBtn = document.getElementById("loginBtn");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
+    const errorMessage = document.getElementById("errorMessage");
+
+    // 에러 메시지 표시 함수
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.add("show");
+    }
+
+    // 에러 메시지 숨기기 함수
+    function hideError() {
+        errorMessage.classList.remove("show");
+        errorMessage.textContent = "";
+    }
+
+    // 입력 필드에 포커스가 가면 에러 메시지 숨기기
+    emailInput.addEventListener("focus", hideError);
+    passwordInput.addEventListener("focus", hideError);
 
     loginBtn.addEventListener("click", async function () {
         const email = emailInput.value.trim();
         const pw = passwordInput.value;
 
         if (email === "" || pw === "") {
-            alert("학교메일과 비밀번호를 입력해주세요.");
+            showError("이메일과 비밀번호를 입력해주세요.");
             return;
         }
+
+        // 에러 메시지 숨기기
+        hideError();
 
         // 로딩 상태 표시
         loginBtn.disabled = true;
@@ -18,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             // 서버로 로그인 요청 보내기
-            const response = await fetch("/api/v1/auth/login", {
+            const response = await fetch("https://chajabat.onrender.com/api/v1/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -29,21 +49,77 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
             });
 
-            const data = await response.json();
+            // 응답 상태 확인
+            console.log("로그인 응답 상태:", response.status);
+            
+            let data;
+            try {
+                const text = await response.text();
+                console.log("로그인 응답 본문:", text);
+                if (text) {
+                    data = JSON.parse(text);
+                } else {
+                    data = {};
+                }
+            } catch (jsonError) {
+                console.error("JSON 파싱 오류:", jsonError);
+                showError("서버 응답을 처리하는 중 오류가 발생했습니다.");
+                return;
+            }
 
             if (response.ok) {
                 // 로그인 성공 - 백엔드가 반환하는 access_token과 refresh_token 저장
+                console.log("로그인 성공, 토큰:", data);
+                
                 if (data.access_token) {
                     localStorage.setItem("access_token", data.access_token);
+                    console.log("access_token 저장 완료");
+                } else {
+                    console.error("access_token이 응답에 없습니다!");
                 }
+                
                 if (data.refresh_token) {
                     localStorage.setItem("refresh_token", data.refresh_token);
+                    console.log("refresh_token 저장 완료");
+                } else {
+                    console.error("refresh_token이 응답에 없습니다!");
                 }
+                
+                // 이메일 저장 (작성자 확인용)
+                localStorage.setItem("user_email", email);
+                
+                // 닉네임 저장 (백엔드 응답에 있으면 사용, 없으면 프로필 API에서 가져오기)
+                if (data.nickname) {
+                    localStorage.setItem("nickname", data.nickname);
+                } else {
+                    // 닉네임이 응답에 없으면 프로필 API에서 가져오기
+                    try {
+                        const profileResponse = await fetch('https://chajabat.onrender.com/api/v1/users/profile', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${data.access_token}`
+                            }
+                        });
+                        
+                        if (profileResponse.ok) {
+                            const profileData = await profileResponse.json();
+                            if (profileData.nickname) {
+                                localStorage.setItem("nickname", profileData.nickname);
+                            }
+                        }
+                    } catch (profileError) {
+                        console.error("프로필 로드 오류:", profileError);
+                    }
+                }
+                
                 // 홈 페이지로 이동
                 window.location.href = "../home/home.html";
             } else {
                 // 로그인 실패 - 백엔드가 반환하는 error 메시지 표시
-                alert(data.error || "로그인에 실패했습니다. 다시 시도해주세요.");
+                console.error("로그인 실패:", data);
+                const errorMsg = data.error || data.message || "이메일 또는 비밀번호가 일치하지 않습니다.";
+                showError(errorMsg);
             }
         } catch (error) {
             console.error("로그인 오류:", error);
@@ -79,4 +155,19 @@ document.addEventListener("DOMContentLoaded", function() {
             loginBtn.click();
         }
     });
+
+    // 비밀번호 보기/숨기기 토글
+    const passwordToggle = document.getElementById("passwordToggle");
+    if (passwordToggle) {
+        passwordToggle.addEventListener("click", function() {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            
+            if (type === "password") {
+                passwordToggle.textContent = "visibility";
+            } else {
+                passwordToggle.textContent = "visibility_off";
+            }
+        });
+    }
 });

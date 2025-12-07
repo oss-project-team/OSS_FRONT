@@ -38,6 +38,12 @@ label {
     font-weight: 400;
 }
 
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
 input {
     width: 100%;
     padding: 14px 0;
@@ -54,12 +60,55 @@ input {
     outline: none;
 }
 
+.password-wrapper input {
+    margin-bottom: 0;
+    padding-right: 40px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #949494;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    z-index: 1;
+    box-shadow: none;
+    font-size: 20px;
+    user-select: none;
+}
+
+.password-toggle:hover {
+    color: #009ab7;
+}
+
 input::placeholder {
     color: #1e1e1e;
 }
 
 input:focus {
     border-bottom-color: #009ab7;
+}
+
+.error-message {
+    display: none;
+    width: 100%;
+    text-align: center;
+    color: #ff3b30;
+    font-size: 14px;
+    margin-bottom: 8px;
+    min-height: 20px;
+}
+
+.error-message.show {
+    display: block;
 }
 
 button {

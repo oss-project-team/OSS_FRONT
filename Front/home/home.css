@@ -75,6 +75,7 @@ header img.logo {
     background: #ff3b30;
     border-radius: 50%;
     border: 2px solid #fff;
+    display: none; /* 기본적으로 숨김, 읽지 않은 알림이 있을 때만 표시 */
 }
 
 

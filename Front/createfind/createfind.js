@@ -101,12 +101,54 @@ function showConfirmModal() {
 }
 
 /* =========================================================================
-   게시물 저장 (신규/수정)
+   게시물 저장 (신규/수정) - API 연동
 =========================================================================== */
-function savePost() {
-    let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+async function savePost() {
+    const accessToken = localStorage.getItem('access_token');
+    
+    if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        window.location.href = '../login/login.html';
+        return;
+    }
 
+    try {
+        // 수정 모드인 경우
     if (editId) {
+            const response = await fetch(`https://chajabat.onrender.com/api/v1/posts/${editId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    title: postData.title,
+                    content: postData.description,
+                    category: postData.category,
+                    location: postData.location,
+                    lost_date: postData.foundDate,
+                    images: postData.images.map(img => {
+                        // base64 문자열이면 그대로 사용
+                        if (typeof img === 'string') {
+                            if (img.startsWith('data:image')) {
+                                return img;
+                            }
+                            return img;
+                        }
+                        return img.url || img.data || img;
+                    })
+                })
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                alert(data.error || '게시글 수정에 실패했습니다.');
+                return;
+            }
+            
+            // 성공 시 localStorage에도 업데이트 (fallback)
+            let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
         posts = posts.map(p =>
             p.id == editId
                 ? {
@@ -120,16 +162,87 @@ function savePost() {
                 }
                 : p
         );
+            localStorage.setItem("foundPosts", JSON.stringify(posts));
     } else {
-        // 회원가입 시 저장된 닉네임 사용
-        let nickname = localStorage.getItem("nickname");
-        // nickname이 없으면 기본값 설정 및 저장
-        if (!nickname || nickname.trim() === "") {
-            nickname = "사용자" + Date.now().toString().slice(-6);
-            localStorage.setItem("nickname", nickname);
-        }
+            // 신규 작성
+            // 이미지 배열 처리 - base64 문자열을 그대로 전송 (백엔드에서 처리)
+            const imageUrls = postData.images.map(img => {
+                // base64 문자열이면 그대로 사용, 아니면 url 속성 확인
+                if (typeof img === 'string') {
+                    // base64 데이터 URL인지 확인
+                    if (img.startsWith('data:image')) {
+                        return img;
+                    }
+                    return img;
+                }
+                // 객체인 경우 url 속성 또는 base64 데이터 확인
+                return img.url || img.data || img;
+            });
+            
+            const requestBody = {
+                type: 'Found',
+                title: postData.title,
+                content: postData.description,
+                category: postData.category,
+                location: postData.location,
+                lost_date: postData.foundDate,
+                images: imageUrls
+            };
+            
+            console.log('게시글 작성 요청:', {
+                ...requestBody,
+                images: imageUrls.map((img, idx) => `이미지${idx + 1}: ${img ? img.substring(0, 50) + '...' : '없음'}`)
+            });
+            
+            const response = await fetch('https://chajabat.onrender.com/api/v1/posts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            // 응답 처리
+            if (!response.ok) {
+                let errorMessage = `게시글 작성에 실패했습니다. (${response.status})`;
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorMessage;
+                } catch (e) {
+                    const errorText = await response.text();
+                    if (errorText) {
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.error || errorMessage;
+                        } catch (e2) {
+                            errorMessage = errorText || errorMessage;
+                        }
+                    }
+                }
+                alert(errorMessage);
+                return;
+            }
+            
+            let data;
+            try {
+                const responseText = await response.text();
+                if (responseText) {
+                    data = JSON.parse(responseText);
+                } else {
+                    data = {};
+                }
+            } catch (jsonError) {
+                console.error('JSON 파싱 오류:', jsonError);
+                alert('서버 응답을 처리하는 중 오류가 발생했습니다.');
+                return;
+            }
+            
+            // 성공 시 localStorage에도 저장 (fallback)
+            let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+            let nickname = localStorage.getItem("nickname") || "사용자";
         posts.push({
-            id: postData.id,
+                id: data.id || postData.id,
             title: postData.title,
             description: postData.description,
             category: postData.category,
@@ -139,9 +252,13 @@ function savePost() {
             solved: false,
             author: nickname.trim()
         });
-    }
-
     localStorage.setItem("foundPosts", JSON.stringify(posts));
+        }
+    } catch (error) {
+        console.error('게시글 저장 오류:', error);
+        alert('게시글 저장 중 오류가 발생했습니다.');
+        throw error;
+    }
 }
 
 /* =========================================================================
@@ -234,10 +351,20 @@ function setupEvents() {
     });
 
     /* 올리기 */
-    confirmBtn.addEventListener("click", () => {
-        savePost();
+    confirmBtn.addEventListener("click", async () => {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = '저장 중...';
+        
+        try {
+            await savePost();
         confirmModal.classList.remove("show");
         showUploadModal();
+        } catch (error) {
+            // 에러는 savePost에서 이미 처리됨
+        } finally {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '올리기';
+        }
     });
 
     /* 업로드 완료 → 홈 또는 detail 이동 */
@@ -251,11 +378,94 @@ function setupEvents() {
 }
 
 /* =========================================================================
-   수정모드 데이터 로드
+   수정모드 데이터 로드 (API 연동)
 =========================================================================== */
-function loadEditData() {
+async function loadEditData() {
     if (!editId) return;
 
+    const accessToken = localStorage.getItem('access_token');
+    
+    try {
+        // API에서 게시글 상세 정보 가져오기
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+
+        const response = await fetch(`https://chajabat.onrender.com/api/v1/posts/${editId}`, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (response.ok) {
+            const target = await response.json();
+            
+            // 입력 필드에 기존 값 채우기
+            titleInput.value = target.title || '';
+            descriptionInput.value = target.content || target.description || '';
+            locationInput.value = target.location || '';
+            foundDateInput.value = target.lost_date || target.date || '';
+
+            // postData 객체도 업데이트
+            postData.title = target.title || '';
+            postData.description = target.content || target.description || '';
+            postData.location = target.location || '';
+            postData.foundDate = target.lost_date || target.date || '';
+            postData.category = target.category || '';
+            postData.images = target.images && target.images.length > 0 
+                ? target.images 
+                : (target.img ? [target.img] : []);
+
+            // 글자 수 카운트 업데이트
+            titleCount.textContent = (target.title || '').length;
+            descriptionCount.textContent = (target.content || target.description || '').length;
+
+            // 카테고리 버튼 활성화
+            categoryButtons.forEach(btn => {
+                if (btn.dataset.category === target.category) {
+                    btn.classList.add("active");
+                }
+            });
+
+            updatePreview();
+        } else {
+            // API 실패 시 localStorage에서 로드 (fallback)
+            let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
+            const target = posts.find(p => p.id == editId);
+            if (!target) return;
+
+            // 입력 필드에 기존 값 채우기
+            titleInput.value = target.title || '';
+            descriptionInput.value = target.description || '';
+            locationInput.value = target.place || '';
+            foundDateInput.value = target.date || '';
+
+            // postData 객체도 업데이트
+            postData.title = target.title || '';
+            postData.description = target.description || '';
+            postData.location = target.place || '';
+            postData.foundDate = target.date || '';
+            postData.category = target.category || '';
+            postData.images = target.img ? [target.img] : [];
+
+            // 글자 수 카운트 업데이트
+            titleCount.textContent = (target.title || '').length;
+            descriptionCount.textContent = (target.description || '').length;
+
+            // 카테고리 버튼 활성화
+            categoryButtons.forEach(btn => {
+                if (btn.dataset.category === target.category) {
+                    btn.classList.add("active");
+                }
+            });
+
+            updatePreview();
+        }
+    } catch (error) {
+        console.error('게시글 로드 오류:', error);
+        // 에러 발생 시 localStorage에서 로드 (fallback)
     let posts = JSON.parse(localStorage.getItem("foundPosts")) || [];
     const target = posts.find(p => p.id == editId);
     if (!target) return;
@@ -275,6 +485,7 @@ function loadEditData() {
     });
 
     updatePreview();
+    }
 }
 
 /* =========================================================================

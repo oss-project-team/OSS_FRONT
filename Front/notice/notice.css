@@ -1,9 +1,10 @@
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Pretendard',sans-serif;background:#f4f4f4;}
+body{font-family:'Pretendard',sans-serif;background:#f7f7f7;}
 
 /* ───────────────────────────── CONTACT 헤더 완전 동일 ───────────────────────────── */
 .top-header{
-    height:55px;
+    min-height:55px;
+    padding:12px 16px;
     background:#fff;
     display:flex;
     align-items:center;
@@ -11,7 +12,7 @@ body{font-family:'Pretendard',sans-serif;background:#f4f4f4;}
     position:sticky;
     top:0;
     z-index:10;
-    border-bottom:1px solid #ddd;
+    box-shadow:0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .top-header > span{
@@ -44,7 +45,7 @@ body{font-family:'Pretendard',sans-serif;background:#f4f4f4;}
 .notice-bell{font-size:24px;color:#000000; cursor:pointer;}
 .notice-bell.off{color:#bbbbbb;}
 
-.settings-icon{font-size:24px;color:#5D8AA8;cursor:pointer;}
+.settings-icon{font-size:24px;color:#666;cursor:pointer;}
 .notice-bell:hover,
 .settings-icon:hover{
     color:#009ab7;
@@ -63,7 +64,7 @@ body{font-family:'Pretendard',sans-serif;background:#f4f4f4;}
     background:#fff;
     border-radius:15px;
     padding:18px;
-    box-shadow:0 2px 6px rgba(0,0,0,.08);
+    box-shadow:0 1px 3px rgba(0,0,0,.05);
     border:1px solid #e2e2e2;
     cursor:pointer;
     transition:0.2s;
@@ -106,14 +107,19 @@ body{font-family:'Pretendard',sans-serif;background:#f4f4f4;}
     color:#fff;
     font-weight:600;
 }
-.tag.notice{background:#505050;}
-.tag.message{background:#4A6CF7;}
+.tag.notice{background:#666;}
+.tag.message{background:#009ab7;}
+.tag.keyword{background:#ff9800;}
 
 /* 쪽지 버튼 */
 .msg-btn{
     margin-top:10px;padding:7px 12px;
-    background:#4A6CF7;color:#fff;
+    background:#009ab7;color:#fff;
     border:none;border-radius:6px;cursor:pointer;
     font-size:13px;
+    transition:background 0.2s;
+    text-align:center;
+    display:block;
+    width:100%;
 }
-.msg-btn:hover{background:#3a56c9;}
+.msg-btn:hover{background:#0088a3;}

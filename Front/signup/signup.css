@@ -124,6 +124,56 @@ body {
   font-weight: 500;
 }
 
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  padding-right: 45px;
+}
+
+/* 인증번호 입력 필드 래퍼 */
+.verification-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.verification-wrapper input {
+  width: 100%;
+  padding-right: 100px; /* 버튼 공간 확보 */
+}
+
+.verify-code-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px 16px;
+  background: #009ab7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.verify-code-btn:hover {
+  background: #0088a3;
+}
+
+.verify-code-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
 .form-group input {
   width: 100%;
   padding: 14px 12px;
@@ -132,6 +182,31 @@ body {
   font-size: 16px;
   background: #fff;
   transition: border-color 0.2s;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #949494;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  z-index: 1;
+}
+
+.password-toggle:hover {
+  color: #009ab7;
+}
+
+.password-toggle .material-icons {
+  font-size: 20px;
 }
 
 .form-group input:focus {
@@ -342,6 +417,83 @@ body {
 
 .complete-btn {
   background: #009ab7;
+}
+
+/* 성공 팝업 */
+.success-popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.success-popup.show {
+  display: flex;
+}
+
+.popup-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 24px;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  animation: popupSlideIn 0.3s ease-out;
+}
+
+@keyframes popupSlideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.popup-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #4caf50;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0 auto 20px;
+}
+
+.popup-message {
+  font-size: 16px;
+  color: #1e1e1e;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.popup-close-btn {
+  width: 100%;
+  padding: 14px;
+  background: #009ab7;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.popup-close-btn:hover {
+  background: #0088a3;
 }
 
 /* 반응형 */

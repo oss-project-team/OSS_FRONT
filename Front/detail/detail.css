@@ -5,6 +5,83 @@ body {
     background: #f7f7f7;
 }
 
+/* 성공 팝업 */
+.success-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.success-popup.show {
+    display: flex;
+}
+
+.popup-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 24px;
+    max-width: 320px;
+    width: 90%;
+    text-align: center;
+    animation: popupSlideIn 0.3s ease-out;
+}
+
+@keyframes popupSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.popup-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #4caf50;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0 auto 20px;
+}
+
+.popup-message {
+    font-size: 16px;
+    color: #1e1e1e;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.popup-close-btn {
+    width: 100%;
+    padding: 14px;
+    background: #009ab7;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.popup-close-btn:hover {
+    background: #0088a3;
+}
+
 .page-wrapper {
     max-width: 480px;
     margin: 0 auto;

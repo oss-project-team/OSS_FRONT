@@ -2,6 +2,9 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>마이페이지</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -10,7 +13,6 @@
 
 <body>
 
-<!-- ====================== 상단 헤더 ====================== -->
 <header class="top-header">
     <span class="header-title">마이페이지</span>
 
@@ -21,17 +23,14 @@
 </header>
 
 
-<!-- ====================== 프로필 영역 ====================== -->
 <section class="profile-section">
-    <img class="profile-img" id="profileImage">
+    <img class="profile-img" id="profileImage" alt="프로필 이미지">
     <h2 id="nickname">닉네임</h2>
 </section>
 
 
-<!-- ====================== 메뉴 리스트 ====================== -->
 <section class="menu-list">
 
-    <!-- 프로필 관리 -->
     <div class="menu-item">
         <div class="menu-header">프로필 관리</div>
         <div class="menu-content">
@@ -49,34 +48,26 @@
         </div>
     </div>
 
-    <!-- 개인정보 관리 -->
 <div class="menu-item">
-    <div class="menu-header">개인 정보 관리</div>
+        <div class="menu-header">관심 키워드</div>
     <div class="menu-content">
-        <input id="emailInput" type="email" placeholder="새 이메일 입력">
-        <input id="phoneInput" type="text" placeholder="010-0000-0000">
-        <button class="info-save-btn" onclick="savePersonalInfo()">변경</button>
+            <button class="keyword-btn" onclick="location.href='../keywords/keywords.html'">관심 키워드 등록</button>
+        </div>
     </div>
-</div>
 
-
-    <!-- 게시글 관리 -->
     <div class="menu-item">
         <div class="menu-header">게시글 관리</div>
         <div class="menu-content">
-            <p>내 게시글 보기</p>
             <ul id="myPostList" class="my-post-list"></ul>
         </div>
     </div>
 
-    <!-- 차단 계정 -->
     <div class="menu-item">
         <div class="menu-header">차단 계정</div>
         <div class="menu-content">
             <input type="text" id="blockUser" placeholder="차단할 닉네임 입력">
             <button class="add-btn" onclick="addBlock()">추가</button>
 
-            <!-- 🔥 hover 삭제버튼 스타일 적용 위해 클래스 지정 -->
             <ul id="blockList" class="block-list"></ul>
         </div>
     </div>
@@ -84,16 +75,14 @@
 </section>
 
 
-<!-- ====================== 팝업 ====================== -->
 <div class="popup-bg" id="popup">
     <div class="popup-box">
-        <p id="popupMsg">프로필이 저장되었습니다.</p> <!-- JS에서 메시지 변경 가능 -->
+        <p id="popupMsg">프로필이 저장되었습니다.</p>
         <button class="popup-btn" onclick="closePopup()">확인</button>
     </div>
 </div>
 
 
-<!-- ====================== 하단 네비 ====================== -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="location.href='../contact/contact.html'">
         <i class="material-icons nav-icon">mail</i>
@@ -110,7 +99,6 @@
         <span class="nav-label">마이페이지</span>
     </button>
 </nav>
-
 
 <script src="mypage.js"></script>
 </body>

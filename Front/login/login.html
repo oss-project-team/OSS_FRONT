@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="login.css">
     <title>로그인</title>
 </head>
@@ -12,12 +13,16 @@
     <div class="container">
         <img src="logo.png" class="logo">
 
-        <label>학교메일</label>
-        <input type="email" id="email" value="20242013@edu.hanbat.ac.kr">
+        <label>이메일</label>
+        <input type="email" id="email" placeholder="이메일을 입력하세요">
 
         <label>비밀번호</label>
-        <input type="password" id="password" value="1234">
+        <div class="password-wrapper">
+            <input type="password" id="password" placeholder="비밀번호를 입력하세요">
+            <i class="material-icons password-toggle" id="passwordToggle">visibility</i>
+        </div>
 
+        <div class="error-message" id="errorMessage"></div>
         <button id="loginBtn">로그인</button>
 
         <div class="menu">

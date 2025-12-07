@@ -15,7 +15,7 @@
 
     <div class="page-wrapper">
 
-        <!-- 🔙 상단 뒤로가기 -->
+        <!--  상단 뒤로가기 -->
         <header class="detail-header">
             <button id="backBtn"><i class="material-icons">arrow_back</i></button>
         </header>
@@ -25,7 +25,7 @@
             <img id="detailImage" src="">
         </div>
 
-        <!-- 🔥 작성자 정보 -->
+        <!--  작성자 정보 -->
         <div class="detail-user-section">
             <div class="user-info">
                 <div class="user-profile"></div>
@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <!-- 🔥 내용 카드 -->
+        <!--  내용 카드 -->
         <div class="detail-card">
 
             <div class="detail-category" id="detailCategory"></div>
@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <!-- 🔥 버튼 영역 (작성자/일반 사용자 구분) -->
+        <!--  버튼 영역 (작성자/일반 사용자 구분) -->
         <div class="btn-wrap" id="btnWrap">
             <!-- 일반 사용자용: 쪽지 보내기 -->
             <button id="msgBtn" class="btn-msg" style="display: none;">쪽지 보내기</button>
@@ -79,6 +79,15 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- 삭제 성공 팝업 -->
+    <div class="success-popup" id="successPopup">
+        <div class="popup-content">
+            <div class="popup-icon">✓</div>
+            <div class="popup-message" id="popupMessage">게시물이 삭제되었습니다.</div>
+            <button class="popup-close-btn" id="popupCloseBtn">확인</button>
+        </div>
     </div>
 
     <script src="detail.js"></script>
